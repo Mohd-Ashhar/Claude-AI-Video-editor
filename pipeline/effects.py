@@ -30,7 +30,7 @@ from dataclasses import dataclass, field
 from enum import IntEnum
 from typing import Callable
 
-from pipeline import config
+from pipeline import config, media
 
 
 class Stage(IntEnum):
@@ -579,18 +579,28 @@ def _night_grade(spec: dict, ctx: Context) -> list[Op]:
     paid for. Gamma leaves the black point where it is.
     """
     window = _window(spec, ctx)
-    # Calibrated, not guessed: swept against this user's own gym footage until
-    # the output matched the references on both axes at once. These values take
-    # a mean luma of 86.0 / B-R of -1.4 to 37.0 / +9.4, against a reference band
-    # of 34.7-39.9 and +9 to +13. A source already shot dark will land darker --
-    # this is a fixed grade, not an auto-exposure, and the numbers above are the
-    # thing to re-measure if the footage changes character.
+    # The defaults are a swept calibration against this user's own gym footage,
+    # and are only correct for a source that starts where the calibration clip
+    # started (mean luma 86.0 / B-R -1.4). They are a fallback: in a real build
+    # merge.py solves brightness/cool/lift per clip and sequence.dress() passes
+    # the solved values in, because nine real clips arrive anywhere from luma
+    # 29.6 to 75.0 and one fixed grade cannot serve them.
     luma = _num(spec, "brightness", -0.10)
     contrast = _num(spec, "contrast", 1.22)
     saturation = _num(spec, "saturation", 0.82)
     cool = _num(spec, "cool", 0.10)
-    if not -0.6 <= luma <= 0.2:
-        raise EffectError("night_grade: brightness must be -0.6..0.2")
+    # The bound is the solver's own, read from it rather than restated. It was
+    # -0.6..0.2 here while media.fit_grade clamped to -0.85..0.60 and
+    # clip_cards.schema.json permitted the same, so a legitimately solved card
+    # could pass merge.py, validate against its own contract, survive
+    # sequence.dress() and then be refused at graph-build time. It was not
+    # hypothetical: a real build peaked at +0.1524 and config.GRADE_ARC adds up
+    # to +0.0812 on top of that, for +0.2336 against a guard of +0.20 -- it had
+    # simply never landed in the first third of a reel yet.
+    if not media.GRADE_MIN_BRIGHTNESS <= luma <= media.GRADE_MAX_BRIGHTNESS:
+        raise EffectError(
+            f"night_grade: brightness must be {media.GRADE_MIN_BRIGHTNESS}.."
+            f"{media.GRADE_MAX_BRIGHTNESS}")
     # The mid control point. Raising it lifts the subject out of the shadows
     # while the toe holds the room down -- which is the shape of the reference
     # look, and not something brightness can express. Measured on the four
@@ -605,8 +615,15 @@ def _night_grade(spec: dict, ctx: Context) -> list[Op]:
                f":gamma_b={1.0 + cool:.3f}:gamma_r={1.0 - cool:.3f}{gate}"),
         # curves is the only filter in this build that can move the black point
         # and the mid-tones independently of the highlights the rim light needs.
+        #
+        # The pivot comes from media.GRADE_LIFT_PIVOT, not a literal. This used
+        # to be a hard-coded 0.55 that happened to match the one in
+        # media.grade_chain -- two copies agreeing by luck. media.grade_chain is
+        # the curve fit_grade *measures* against; this is the curve that actually
+        # renders. Diverge them and every clip is solved for a picture it is
+        # never shown as, and nothing downstream can see it.
         Filter(f"curves=all='0/0 0.20/{_num(spec, 'toe', 0.10):.3f} "
-               f"0.55/{lift:.3f} 1/1'{gate}"),
+               f"{media.GRADE_LIFT_PIVOT:.2f}/{lift:.3f} 1/1'{gate}"),
     ]
 
 

@@ -62,6 +62,59 @@ SUBJECT_BONUS = 0.55
 
 MIN_PX = 18
 
+# --- ink legibility ---------------------------------------------------------
+#
+# The packs' accent reds were measured off the references and are correct as
+# measurements. Two of them are also nearly unreadable on a phone: chrome's
+# #700D0D carries a relative luminance of 34 and is drawn at 0.62 alpha, against
+# a frame the grade now takes to 44. "It reads as depth rather than emphasis" is
+# true on a laptop in a dark room and false in a bus at arm's length.
+#
+# So the pack keeps its measured value on disk and the layout lifts it on the way
+# past. Below INK_MIN_LUMA an ink is scaled toward INK_LIFT_TO, with INK_MIN_GAIN
+# as a floor so a colour sitting just under the threshold still moves.
+#
+# Deliberately gentle. An earlier pass targeted 110 and took all three dark reds
+# to luminance 87-100, above marker's #F12109 at 75.5 -- which STYLE.md documents
+# as the only fully saturated colour in the system. That inverted the hierarchy
+# and collapsed three distinct identities into one bright red. At 80 only chrome
+# clips a channel; editorial and stencil scale cleanly and keep their measured
+# hue and saturation exactly, because a scalar gain on all three channels is a
+# pure value change.
+INK_MIN_LUMA = 60.0
+INK_LIFT_TO = 80.0
+INK_MIN_GAIN = 1.4
+
+
+def _adjust_ink_luminance(rgb: list[int]) -> list[int]:
+    """Lift ink too dark to read against the graded frame. Bright ink is untouched.
+
+    Rec.709 weights on *gamma-encoded* sRGB. This is a legibility heuristic, not
+    WCAG relative luminance -- that needs the channels linearised first -- and it
+    is emphatically not the pipeline's other notion of luma, which is the
+    unweighted channel mean in media.measure_through_matte. Do not compare a
+    number from here against GRADE_TARGET_LUMA; they are different scales.
+
+    The 255 clamp means the target is a direction, not a promise: chrome's
+    #700D0D wants a gain of 2.35, saturates its red channel, and arrives at 78.6
+    rather than 80. Measured results, at the two thresholds above:
+
+        chrome     #700D0D  34.0 -> #FF1F1F  78.6   (red channel clips)
+        editorial  #961A16  52.1 -> #E62822  80.0
+        stencil    #A3201A  59.4 -> #E42D24  83.3   (gain floor, not the target)
+        marker     #F12109  75.5 -> unchanged
+
+    Every pack's base ink sits at 221-255 and is never touched. Neither is
+    stencil's backdrop_word (#801410 at 0.26 alpha) -- it never enters `placed`,
+    and it is a decorative ghost behind the type rather than something anyone is
+    meant to read.
+    """
+    lum = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]
+    if lum >= INK_MIN_LUMA:
+        return list(rgb)
+    gain = max(INK_LIFT_TO / max(lum, 1.0), INK_MIN_GAIN)
+    return [min(255, int(round(channel * gain))) for channel in rgb]
+
 
 class StyleError(Exception):
     """A style pack is missing, malformed, or names a face that will not load."""
@@ -268,6 +321,10 @@ def layout(phrase: list[dict], style: dict, band: tuple[int, int] | None = None,
         if rung_index == top_rung:
             big_used = True
 
+        # Lifted here rather than in the pack, so styles/*.json keeps the colour
+        # that was measured off the reference and this stays one rule in one
+        # place. state_key() hashes rgb, so a lifted colour cannot be served a
+        # stale PNG rendered with the old one.
         ink = style["colours"]["accent" if accent else "base"]
         placed.append({
             **word,
@@ -276,7 +333,7 @@ def layout(phrase: list[dict], style: dict, band: tuple[int, int] | None = None,
             "size": int(font.size if hasattr(font, "size") else MIN_PX),
             "rung": rung_index,
             "role": role,
-            "rgb": list(ink["rgb"]),
+            "rgb": _adjust_ink_luminance(list(ink["rgb"])),
             "alpha": float(ink["alpha"]),
         })
 

@@ -1258,6 +1258,48 @@ def check_floating_text() -> None:
             dead.append(f"{path.stem}: blank")
     check("every style pack renders visible type", not dead, str(dead[:2]))
 
+    # --- ink legibility ---
+    #
+    # Nothing in this file looked at `rgb` before. The packs' accent reds are
+    # correct as measurements off the references and two of them are also close
+    # to unreadable on a phone: chrome's #700D0D is luminance 34 at 0.62 alpha,
+    # against a frame the grade takes to 44.
+    def _relative_luma(rgb) -> float:
+        return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]
+
+    # Assert against what the 255 clamp can actually deliver, not against the
+    # target. A saturated red cannot reach INK_LIFT_TO without desaturating --
+    # chrome asks for a gain of 2.35, clips its red channel and arrives at 78.6.
+    # Gating on the unreachable number would be a check that can only be passed
+    # by weakening the colour.
+    dim = []
+    for path in packs:
+        pack = compose.load(path.stem)
+        for role in ("base", "accent"):
+            raw = pack["colours"][role]["rgb"]
+            lifted_ink = compose._adjust_ink_luminance(list(raw))
+            if _relative_luma(lifted_ink) < compose.INK_MIN_LUMA:
+                dim.append(f"{pack['id']}/{role} "
+                           f"{_relative_luma(lifted_ink):.1f}")
+            if any(not isinstance(c, int) or not 0 <= c <= 255
+                   for c in lifted_ink):
+                dim.append(f"{pack['id']}/{role} left the 0-255 integer range")
+    check("every ink clears the legibility floor once lifted", not dim,
+          str(dim) if dim
+          else f"all 8 inks >= {compose.INK_MIN_LUMA:.0f} relative luma")
+
+    # And the lift must survive into the placed word, which is what becomes a
+    # PNG. Applying it anywhere the layout does not reach would be invisible
+    # here and invisible in the reel.
+    chrome_raw = compose.load("chrome")["colours"]["accent"]["rgb"]
+    accented = [w for w in compose.layout(phrase, style, band, None, seed=11)
+                if w.get("accent")]
+    check("a dark accent is lifted before it reaches the PNG",
+          bool(accented) and accented[0]["rgb"] != list(chrome_raw)
+          and _relative_luma(accented[0]["rgb"]) > _relative_luma(chrome_raw),
+          f"chrome accent {list(chrome_raw)} -> "
+          f"{accented[0]['rgb'] if accented else 'nothing placed'}")
+
     # Phrase grouping: words share a group, and a group never exceeds the pack.
     times = [i * 0.4 for i in range(12)]
     groups = compose_groups = lyrics.group(times, 3, 5.0)
@@ -1370,9 +1412,16 @@ def check_floating_text() -> None:
                                extra=media.grade_chain(fitted["brightness"],
                                                        fitted["cool"],
                                                        fitted["lift"]))
-    check("the solved grade lands the clip in the reference luma band",
-          34.0 <= after[0] <= 40.5,
-          f"luma {tone_luma:.1f} -> {after[0]:.1f} (references 34.7-39.9)")
+    # The band is the *target's*, not the references'. It used to be 34.0-40.5,
+    # which was the references' own 34.7-39.9 with a margin. The frame target now
+    # sits deliberately above that band -- the references were shot in rooms this
+    # footage is not shot in, and reproducing their frame mean on non-studio gym
+    # light shipped reels that could not be read on a phone. Widening this check
+    # is the honest consequence of that decision, not a concession to it.
+    check("the solved grade lands the clip on the frame target",
+          41.0 <= after[0] <= 47.0,
+          f"luma {tone_luma:.1f} -> {after[0]:.1f} "
+          f"(target {media.GRADE_TARGET_LUMA:.1f}; references 34.7-39.9)")
     check("the solved grade lands the clip in the reference colour band",
           8.0 <= after[1] <= 14.0,
           f"B-R {tone_cool:+.1f} -> {after[1]:+.1f} (references +9 to +13)")
@@ -1439,11 +1488,49 @@ def check_floating_text() -> None:
           media.GRADE_TARGET_SUBJECT > media.GRADE_TARGET_LUMA,
           f"subject {media.GRADE_TARGET_SUBJECT} against frame "
           f"{media.GRADE_TARGET_LUMA} — the references carry 53 against 35")
+    # Both probes use lifts the solver can actually reach. 0.50 was below the
+    # floor once GRADE_MIN_LIFT moved to 0.52, so the check was asserting on a
+    # curve nothing would ever be rendered with.
+    pivot = f"{media.GRADE_LIFT_PIVOT:.2f}"
     lifted = media.grade_chain(0.0, 0.1, lift=0.80)
-    flat_curve = media.grade_chain(0.0, 0.1, lift=0.50)
+    flat_curve = media.grade_chain(0.0, 0.1, lift=media.GRADE_MIN_LIFT)
     check("the grade curve has a mid control point that moves",
-          "0.55/0.800" in lifted and "0.55/0.500" in flat_curve,
+          f"{pivot}/0.800" in lifted
+          and f"{pivot}/{media.GRADE_MIN_LIFT:.3f}" in flat_curve,
           "without one the subject falls with the room")
+
+    # The fitter and the renderer must build the *same* curve. media.grade_chain
+    # is what fit_grade measures against; effects.night_grade is what actually
+    # renders. These were two hard-coded copies of the pivot agreeing by luck,
+    # and the check above only ever exercised the fitter's -- so moving the
+    # constant would have passed verification while silently rendering every clip
+    # on a curve it was not solved for.
+    night = effects.build_chain(
+        {"source": CLIP_1, "in": 0.0, "out": 1.0,
+         "effects": [{"type": "night_grade", "lift": 0.80}]}, ctx, "0:v", "o")
+    check("the renderer and the fitter share one lift pivot",
+          f"{pivot}/0.800" in night,
+          f"pivot {pivot} from media.GRADE_LIFT_PIVOT must reach the filtergraph")
+
+    # And the renderer must accept every value the solver is allowed to emit.
+    # It did not: night_grade refused brightness outside -0.6..0.2 while
+    # fit_grade clamped to -0.85..0.60 and clip_cards.schema.json permitted the
+    # same, so a legitimately solved card could validate and then be refused at
+    # graph-build time. A real build peaked at +0.1524 with config.GRADE_ARC
+    # adding +0.0812 on top -- +0.2336, already past the old guard.
+    reach = []
+    for edge in (media.GRADE_MIN_BRIGHTNESS, media.GRADE_MAX_BRIGHTNESS):
+        try:
+            effects.build_chain(
+                {"source": CLIP_1, "in": 0.0, "out": 1.0,
+                 "effects": [{"type": "night_grade", "brightness": edge}]},
+                ctx, "0:v", "o")
+        except Exception as exc:  # noqa: BLE001 - a refusal is the failure
+            reach.append(f"{edge:+.2f}: {exc}")
+    check("night_grade accepts the whole range the solver can emit", not reach,
+          str(reach) if reach
+          else f"brightness {media.GRADE_MIN_BRIGHTNESS:+.2f}.."
+               f"{media.GRADE_MAX_BRIGHTNESS:+.2f} compiles")
 
     # --- quality: one lossy generation, not two ---
     check("there is an intermediate encoder that is not a delivery codec",
