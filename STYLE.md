@@ -5,7 +5,7 @@ real footage in `Gym-Input/`. **These numbers are the specification.** If output
 stops matching them, re-measure — do not re-argue. The method for measuring a
 new reference is in `.claude/commands/analyse-reference.md`.
 
-Last measured: 2026-08-21. Gate: `python verify.py` (176 checks).
+Last measured: 2026-08-21. Gate: `python verify.py` (180 checks).
 
 ---
 
@@ -79,18 +79,36 @@ No assumed gains: three closed forms were tried and all three failed, because
 
 | Axis | Control | Target | Reference range |
 |---|---|---|---|
-| Frame luma | `brightness` | 37.0 | 34.7–40.5 |
-| **Subject luma** | `lift` (curve mid-point at 0.55) | 66.0, solved as a **ratio** of 1.78 | 53.0–84.1 |
+| Frame luma | `brightness` | 44.0 — **above the references, deliberately** | 34.7–40.5 |
+| **Subject luma** | `lift` (curve mid-point at 0.48) | 74.0, solved as a **ratio** of 1.68 | 53.0–84.1 |
 | Colour | `cool` (`gamma_b`/`gamma_r`) | B−R +11.0 | +9 to +13 |
 
-Clamps: `brightness` `-0.85`..`0.60`, `cool` **`-0.34`**..`0.34`, `lift` `0.40`..`0.86`.
+Clamps: `brightness` `-0.85`..`0.60`, `cool` **`-0.34`**..`0.34`, `lift` `0.52`..`0.86`.
+
+**The frame target is the one number here that is a choice, not a measurement.**
+The references sit at 34.7–39.9 and were shot in rooms this footage is not shot
+in; reproducing their frame mean under non-studio gym light reproduced the
+darkness without the light that made it read, and shipped reels that could not be
+read on a phone. Everything else in this file still tracks a measurement. This
+one tracks a decision, and `verify.py`'s luma band was widened to 41.0–47.0 to
+match it rather than the references.
 
 - **`cool` must be allowed negative.** A source that grades out too blue needs
   warming; a zero floor leaves the solver pinned.
 - **`lift` targets the ratio, not absolute subject luma.** Both controls move the
   frame mean, so two absolute targets had them fighting.
 - **When both saturate, frame darkness wins.** A clip that cannot have a lit
-  subject should still look like it belongs.
+  subject should still look like it belongs. The `lift` floor is what that phase
+  spends; at `0.40` it spent too much — 2 of 9 cards in a real build sat pinned
+  there, i.e. rendered as dark as the solver could make them. `0.52` keeps the
+  give-up over a narrower range.
+- **Colour is solved last, alone.** The joint loop's `cool` secant is polluted by
+  the `brightness` and `lift` steps taken in the same round: the slope it reads
+  is the response to everything that moved, so the axis stops while still wrong.
+  Measured — a daylight clip settled at `cool -0.1447` for B−R **+15.2** against
+  a target of +11.0, nowhere near its `-0.34` floor, and 14 rounds did no better
+  than 9. A third phase re-solves `cool` with the other two frozen: +15.2 → +10.3
+  and +9.3 → +11.3, frame luma unmoved. ~5 extra probes per clip.
 - Solved on the **proxy**, at the moment's own window, stored on the clip card.
   One shoot spanned luma 29.6–75.0 and B−R −12.5 to +4.0; a fixed grade put the
   reel at 17.6 against the reference's 34.7.
@@ -98,24 +116,40 @@ Clamps: `brightness` `-0.85`..`0.60`, `cool` **`-0.34`**..`0.34`, `lift` `0.40`.
 **Two burn-time trims**, because the per-clip grade cannot see the finished reel:
 
 - **Level** (`media.fit_level`) — the grade measures the whole proxy frame; the
-  reel shows only the strip. Clips that each solved to 37 concatenated to 47.
+  reel shows only the strip. Measured against the old target, clips that each
+  solved to 37 concatenated to a strip reading 47; the trim closes that gap
+  against whatever the frame target currently is.
 - **Dodge** (`media.fit_dodge`) — a local lift through the matte, for subjects a
   global curve cannot reach. Some start *darker* than their background (59.2 vs
   64.4 measured); no tone curve can invert that. Max 0.22. Needs an **all-frames
   matte** or the subject pulses as words come and go.
+- **Dodge floor.** Below a subject of 65 the dodge is floored at 0.08 rather than
+  allowed to return nothing, because the global curve routinely runs out first:
+  on the daylight test clip the new grade takes the frame to 43.5 and the subject
+  only to 47.3, with separation moving 1.07 → 1.09. Subject and background share
+  a tonal range there and no curve can separate them. Floored only when a subject
+  was actually *found* — `fit_dodge` returns 0.0 for "already bright enough",
+  "nothing in the matte" and "the probe says it cannot be lifted", and only the
+  first means no lift is needed. The other two get reported, not filled.
 
 Both sample **12 frames** — at five the same file measured subject luma 40.9 and
 66.3, which is the difference between "needs a big dodge" and "needs none".
 
-**Achieved on real footage:** frame 41.9 · subject 58.4 · separation 1.39 ·
-chroma 16.4, against Gym_1's 35.0 · 53.0 · 1.51 · 26.9.
+**Achieved on real footage, before this change:** frame 41.9 · subject 58.4 ·
+separation 1.39 · chroma 16.4, against Gym_1's 35.0 · 53.0 · 1.51 · 26.9. **Not
+yet re-measured against the new targets** — do that with
+`media.measure_through_matte(reel, matte, band=(656, 1264))` on a fresh build and
+replace this line. Until then it is history, not a current reading.
 
-**The subject target was 53.0 and is now 66.0.** 53.0 is Gym_1's subject, and
-Gym_1 is the darkest of the four — the anchor was the bottom of a 53.0–84.1
-range. A reel came back "too dark" measuring frame 42.1 against a subject of
-53.1; the frame was *brighter* than three of the four references, so the fault
-was the subject, not the exposure. A dark room is the look; a dark person is the
-fault.
+**The subject target went 53.0 → 66.0 → 74.0**, twice raised against the same
+complaint. 53.0 is Gym_1's subject and Gym_1 is the darkest of the four, so the
+anchor was the bottom of a 53.0–84.1 range; 66.0 put it mid-range. A reel came
+back "too dark" measuring frame 42.1 against a subject of 53.1 — the frame was
+*brighter* than three of the four references, so the fault was the subject, not
+the exposure. A dark room is the look; a dark person is the fault. 74.0 sits in
+the upper half of the reference range. Note what this last step is and is not: it
+is not a re-measurement of the references, it is an admission that the references
+were shot under light this footage does not have.
 
 ---
 
@@ -167,6 +201,37 @@ Four typographic identities, one per reference. Data, so a fifth is a JSON edit.
   80px word.
 - `marker`'s `#F12109` is measured on an **eroded glyph core**; the raw mask
   reads a muddy `#BE281E` because anti-aliased edges drag toward the background.
+
+### The accents above are what was measured. They are not all what renders.
+
+`compose._adjust_ink_luminance()` lifts any ink whose Rec.709 relative luminance
+falls under **60** toward **80**, floor ×1.4, clamped at 255. The packs keep the
+measured value on disk; the layout lifts it on the way past, so this is one rule
+in one place and `state_key()` (which hashes `rgb`) cannot serve a stale PNG.
+
+| Pack | Measured | L | Renders as | L |
+|---|---|---|---|---|
+| `chrome` | `#700D0D` | 34.0 | **`#FF1F1F`** | 78.6 (red channel clips) |
+| `editorial` | `#961A16` | 52.1 | **`#E62822`** | 80.0 |
+| `stencil` | `#A3201A` | 59.4 | **`#E42D24`** | 83.3 (the ×1.4 floor, not the target) |
+| `marker` | `#F12109` | 75.5 | unchanged | 75.5 |
+
+Why: `#700D0D` at 0.62 alpha against a frame the grade now takes to 44 reads as
+depth on a laptop in a dark room and as nothing at all on a phone at arm's
+length. Three consequences worth knowing before touching this:
+
+- **`marker`'s red is now the dimmest accent in the system**, at 75.5 against
+  78.6–83.3. The "only fully saturated colour" note above still holds on
+  saturation; it no longer holds on brightness.
+- **`stencil` is in scope by 0.6 of a luminance point.** A re-measure would flip
+  it out entirely.
+- **Every `base` ink (221–255) and `stencil`'s `backdrop_word` are untouched.**
+  The backdrop never enters `placed` — it is a ghost behind the type, not copy.
+
+An earlier pass targeted 110 and took all three reds to 87–100, above `marker`
+and near-identical to each other. 80 was chosen because only `chrome` clips
+there, so `editorial` and `stencil` keep their measured hue and saturation
+exactly — a scalar gain on all three channels is a pure value change.
 
 ---
 
@@ -275,7 +340,7 @@ In order of how often it goes wrong:
 2. **Get the subject big enough** — at least 2.5% of frame for the matte to find
    it. Measured 87–95% usable on mediums and closes, far lower on wides.
 3. **Backlight.** Every reference is a hard rim and almost nothing else. The
-   grade takes the picture to luma ~37 and a rim is what survives that. Flat
+   grade takes the picture to luma ~44 and a rim is what survives that. Flat
    overhead gym light gives separation ~1.1 and the grade can only reach ~1.4
    from there; a rim gets 1.5+.
 4. **Shoot the burst as one continuous take**, not six short ones. Every fragment

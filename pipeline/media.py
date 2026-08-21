@@ -110,7 +110,13 @@ GRADE_REF_LUMA = 86.0
 GRADE_REF_COOL = -1.4
 GRADE_BASE_BRIGHTNESS = -0.10
 GRADE_BASE_COOL = 0.10
-GRADE_TARGET_LUMA = 37.0
+# Deliberately ABOVE the reference band, which measures 34.7-39.9. The four
+# references were shot in rooms this footage is not shot in; reproducing their
+# frame mean on non-studio gym light reproduced the darkness without the light
+# that made it read. 37.0 was the references' own number and it shipped reels
+# that were unreadable on a phone. This is the one number in the file that is a
+# choice rather than a measurement, and it is marked as such on purpose.
+GRADE_TARGET_LUMA = 44.0
 GRADE_TARGET_COOL = 11.0
 # What the *subject* should read, not just the frame. Measured on the references
 # with a segmentation mask: Gym_1 carries a frame mean of 35.0 and a subject at
@@ -118,25 +124,35 @@ GRADE_TARGET_COOL = 11.0
 # crushed room, and not merely a dark picture. Grading to the frame mean alone
 # reproduced the dark room and took the subject down with it (43.4, a ratio of
 # 1.25 against the reference's 1.51), which is exactly the "too dark on my face"
-# complaint. Gym_1 is the anchor because that is the style being copied.
-# Raised from 53.0 after Reel-2 came back "too dark". 53.0 was Gym_1's subject,
-# and Gym_1 is the darkest of the four references -- the measured range across
-# them is 53.0-84.1, so the anchor was the bottom of it. What the complaint
-# actually tracks is the *subject*, not the frame: Reel-2 delivered a frame of
-# 42.1 (brighter than three of four references) with a subject of 53.1, and read
-# as murky; Reel-1 delivered 41.2 with a subject of 73.2 and did not. A dark room
-# is the look, a dark person is the fault. 66.0 sits mid-range and puts
-# separation at 1.78, which is what Reel-1 measured.
-GRADE_TARGET_SUBJECT = 66.0
+# complaint.
+# Twice raised, both times against the same complaint. 53.0 was Gym_1's subject
+# and Gym_1 is the darkest of the four, so the anchor was the bottom of a
+# 53.0-84.1 range; 66.0 put it mid-range at a separation of 1.78. Neither was
+# enough on this user's own footage. What the complaint tracks is the *subject*,
+# not the frame: a reel delivering a frame of 42.1 with a subject of 53.1 read as
+# murky, one delivering 41.2 against 73.2 did not. A dark room is the look, a
+# dark person is the fault. 74.0 sits in the upper half of the reference range
+# and puts separation at 1.68 against the new frame target.
+GRADE_TARGET_SUBJECT = 74.0
 # The mid control point of the curve, and the range it may take. Raising it
 # lifts the body out of the shadows without lifting the room, because the toe
 # below it stays crushed.
 GRADE_BASE_LIFT = 0.62
-GRADE_MIN_LIFT = 0.40
+# Floor raised 0.40 -> 0.52. The floor is what phase one spends when it gives up
+# separation to keep the frame dark, and at 0.40 it spent too much: 2 of 9 cards
+# in a real build sat pinned there, which is a clip rendered as dark as the
+# solver could make it. 0.52 still allows the give-up, over a narrower range.
+GRADE_MIN_LIFT = 0.52
 GRADE_MAX_LIFT = 0.86
-GRADE_LIFT_PIVOT = 0.55
+# Pivot lowered 0.55 -> 0.48 so the lift starts earlier in the range and reaches
+# tones the toe used to hold down. NOT free-standing: effects.py's night_grade
+# renders the same curve and reads this constant, or every clip is solved against
+# a curve it is never rendered with.
+GRADE_LIFT_PIVOT = 0.48
 # Measured response: lift 0.52 -> 0.76 moved the subject 45.1 -> 56.8, so about
-# 49 luma per unit of lift. Seeded only; the solve measures its own slope.
+# 49 luma per unit of lift. UNUSED -- left from when the lift was solved against
+# absolute subject luma. The lift now targets the separation ratio and seeds from
+# GRADE_LIFT_SEP_GAIN below. Kept as the measured slope, read by nothing.
 GRADE_LIFT_GAIN = 49.0
 # The lift is solved against the subject/frame *ratio*, not the subject's
 # absolute luma. Both controls move the frame mean, so targeting two absolute
@@ -262,9 +278,13 @@ def grade_chain(brightness: float, cool: float, lift: float = GRADE_BASE_LIFT,
 
     Four control points, not three. The old curve was a toe and nothing else --
     it crushed the shadows and left the rest of the range alone, so the subject
-    fell with the room. Adding a mid point at 0.55 lets the body come up while
-    the toe holds the background down, which is the whole shape of the reference
-    look rather than a brightness setting.
+    fell with the room. Adding a mid point at GRADE_LIFT_PIVOT lets the body come
+    up while the toe holds the background down, which is the whole shape of the
+    reference look rather than a brightness setting.
+
+    effects.py's night_grade builds the same curve from the same constant. If the
+    two ever diverge, every clip is fitted against a curve it is not rendered
+    with, and nothing downstream can tell -- verify.py gates the pair.
     """
     return (f"eq=brightness={brightness:.4f}:contrast={contrast:.3f}"
             f":saturation={saturation:.3f}"
@@ -412,8 +432,8 @@ def fit_grade(path, start: float = 0.0, span: float = 4.0,
     lift = _clamp(lift, GRADE_MIN_LIFT, GRADE_MAX_LIFT)
     brightness = _clamp(brightness, GRADE_MIN_BRIGHTNESS, GRADE_MAX_BRIGHTNESS)
 
-    # Two explicit phases, because they are two different decisions and running
-    # them in one loop let the first spend every round the second needed.
+    # Three explicit phases, because they are three different decisions and
+    # running them in one loop let the first spend every round the others needed.
     #
     # Phase one: if brightness has bottomed out and the frame is *still* bright,
     # the two controls are pulling against each other. Give up the separation
@@ -440,6 +460,37 @@ def fit_grade(path, start: float = 0.0, span: float = 4.0,
         gain = max(GRADE_LUMA_GAIN_RATIO * out_luma, 40.0)
         brightness += _clamp((GRADE_TARGET_LUMA - out_luma) / gain, -0.35, 0.35)
 
+    # Phase three: colour, with the other two axes frozen.
+    #
+    # The joint loop above solves all three at once, and the cool secant it
+    # measures is contaminated by the brightness and lift steps taken in the same
+    # round: the slope it reads is the response to *everything* that moved, so
+    # one honest cool step gets divided by a gain that has nothing to do with
+    # cool and the axis stops moving while it is still wrong. Measured on the
+    # daylight test clip: the solve settled at cool -0.1447 for a B-R of +15.2
+    # against a target of +11.0, with the control nowhere near its -0.34 floor.
+    # Nine rounds or fourteen made no difference -- it was converged, on the
+    # wrong number. Phase two makes this worse rather than better, because it
+    # moves brightness after cool has stopped being solved at all.
+    #
+    # Freezing the other two makes the secant mean what it says. Costs about five
+    # extra probes; took that clip to +10.3 and the second to +11.3, both inside
+    # the references' +9 to +13, with frame luma unmoved (43.5 -> 43.4).
+    previous: tuple[float, float] | None = None
+    for _ in range(5):
+        cool = _clamp(cool, GRADE_MIN_COOL, GRADE_MAX_COOL)
+        out_luma, out_cool = measure_tone(path, start, span,
+                                          extra=grade_chain(brightness, cool, lift))
+        if out_luma <= 1.0 or abs(GRADE_TARGET_COOL - out_cool) < 0.7:
+            break
+        gain = GRADE_COOL_GAIN
+        if previous is not None and abs(cool - previous[0]) > 1e-4:
+            slope = (out_cool - previous[1]) / (cool - previous[0])
+            if slope > 2.0:
+                gain = slope
+        previous = (cool, out_cool)
+        cool += _clamp((GRADE_TARGET_COOL - out_cool) / gain, -0.15, 0.15)
+
     return {"brightness": round(_clamp(brightness, GRADE_MIN_BRIGHTNESS,
                                        GRADE_MAX_BRIGHTNESS), 4),
             "cool": round(_clamp(cool, GRADE_MIN_COOL, GRADE_MAX_COOL), 4),
@@ -461,6 +512,20 @@ def _clamp(value: float, low: float, high: float) -> float:
 # tone operation at all -- it is a local one.
 DODGE_MAX = 0.22
 DODGE_PROBE = 0.10
+
+# Below this the subject is murky whatever the solve thinks, and the dodge gets a
+# floor rather than being allowed to return nothing. The case this exists for:
+# the global curve reaches the end of what it can do long before the subject is
+# lit. Measured on the daylight test clip under the new targets -- the frame goes
+# to 43.5 and carries the subject only to 47.3, against a target of 74.0, because
+# subject and background share a tonal range and separation moves 1.07 -> 1.09.
+# No curve fixes that. A local lift through the matte is the only tool left.
+#
+# Read against the subject luma *before* the level trim, deliberately: the
+# question this answers is "did this reel come out murky", not "what does the
+# solver see mid-solve".
+DODGE_FLOOR_SUBJECT = 65.0
+DODGE_MIN_APPLIED = 0.08
 
 
 # Twelve, not five. A reel is a dozen different shots and five samples of it is

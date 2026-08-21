@@ -15,7 +15,7 @@ Run everything through the venv: `.venv/bin/python -m pipeline.<stage>`, or
 `uv run python -m …`. There is no `.venv/bin/pip` — the venv is uv-managed, so
 installs are `VIRTUAL_ENV=.venv uv pip install <pkg>`.
 
-**The gate is `python verify.py`.** 176 checks, ~2 minutes. Nothing is done until
+**The gate is `python verify.py`.** 180 checks, ~2 minutes. Nothing is done until
 it passes. Every check exists because something was silently wrong.
 
 ---
@@ -81,6 +81,8 @@ Every one of these cost real debugging time, and every one failed *silently*.
 | `exposure` hands on `gbrpf32le` | the next filter refuses it, error points elsewhere | convert format explicitly |
 | a COMPOSITE-stage effect that is a plain `Filter`, not a `Combine` | compiles, validates, renders, **does nothing** | `build_chain` must collect both |
 | **`maskedmerge` negotiates every input down to the mask's format** | a `gray` mask silently delivers a **black-and-white reel** | `alphamerge` + `overlay` instead |
+| a curve constant written twice — once where the grade is **fitted**, once where it is **rendered** | every clip is solved against a picture it is never shown as; both copies validate | one constant (`media.GRADE_LIFT_PIVOT`), read by `effects.py` too, and gated |
+| a renderer guard **narrower** than the solver's clamp and the schema | a legitimately solved card validates, reaches `dress()`, then is refused at graph-build time | read the bound off the solver, never restate it |
 
 The lesson from the last one: when adding a filter that touches the picture
 globally, assert **chroma**, not only luma. Nothing else was looking at colour.

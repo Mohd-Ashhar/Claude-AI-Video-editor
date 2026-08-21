@@ -697,10 +697,30 @@ def _burn(args) -> int:
                       f"{DIM}(the strip is not what the per-clip grade "
                       f"measured){RESET}")
             dodge = media.fit_dodge(args.burn, matte, band=band, level=level)
-            if dodge > 0:
+            # A floor, for the reel that comes back murky anyway. fit_dodge
+            # returns 0.0 in three cases and only one of them means "no lift
+            # needed": the subject is already at target. The other two -- no
+            # subject found, and a probe showing the subject cannot be lifted --
+            # are gaps, and 0.0 < 65.0 would fire a dodge on both. Hence the
+            # subject_l > 0 guard, and hence the floor being reported rather than
+            # applied quietly when it overrides a real solve.
+            forced = False
+            if 0.0 < subject_l < media.DODGE_FLOOR_SUBJECT:
+                floored = max(dodge, media.DODGE_MIN_APPLIED)
+                forced = floored > dodge
+                dodge = floored
+            if forced:
+                print(f"  {YELLOW}dodge {RESET}  subject reads {subject_l:.0f} against "
+                      f"a frame of {frame_l:.0f} — forcing the floor +{dodge:.3f} "
+                      f"{DIM}(a global curve could not reach "
+                      f"{media.GRADE_TARGET_SUBJECT:.0f}){RESET}")
+            elif dodge > 0:
                 print(f"  {GREEN}dodge {RESET}  subject reads {subject_l:.0f} against "
                       f"a frame of {frame_l:.0f} — lifting it +{dodge:.3f} "
                       f"{DIM}(the references carry 53 against 35){RESET}")
+            elif subject_l <= 0.0:
+                print(f"  {YELLOW}dodge {RESET}  no subject found in the matte; "
+                      f"nothing to lift {DIM}(the words still occlude){RESET}")
             else:
                 print(f"  {DIM}dodge   subject already reads {subject_l:.0f}; "
                       f"no lift needed{RESET}")
