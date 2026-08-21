@@ -1,0 +1,84 @@
+{
+  "id": "travel_lyric_cut",
+  "pillar": "travel",
+  "title": "Lyric cut",
+  "premise": "No captions and no narration — the song's own words come up huge, one at a time, and the subject moves in front of them. Built for a track with a vocal you already know.",
+  "target_seconds": 19,
+  "chronological": false,
+  "loop": false,
+  "text_mode": "lyrics",
+  "letterbox": 1.778,
+  "song": {
+    "tempo": [95, 175],
+    "vocal_density": [0.45, 1.0],
+    "energy_variance": [0.1, 0.9],
+    "needs_drop": false,
+    "payoff_at": 0.6
+  },
+  "copy": {
+    "hook": "",
+    "labels": [],
+    "cta": ""
+  },
+  "shots": [
+    { "id": "open", "role": "hook", "weight": 0.85, "max_seconds": 2.0, "must_have": true,
+      "what": "A wide establishing frame of the place, subject small or absent",
+      "framing": "wide", "camera": "static", "subject": "optional", "motion": "low",
+      "on_section": "any",
+      "shoot": "The title word lands over this, so leave the middle of the frame open. Hold five seconds." },
+
+    { "id": "approach", "role": "promise", "weight": 0.7, "must_have": true,
+      "what": "The subject entering, mid-size in frame",
+      "framing": "medium", "camera": "follow", "subject": "required", "motion": "medium",
+      "on_section": "any",
+      "shoot": "Subject between a quarter and a half of the frame height. This is the size at which a word can pass behind them and read." },
+
+    { "id": "action_a", "role": "build", "weight": 0.7,
+      "what": "The main activity, close enough to fill a third of frame",
+      "framing": "medium", "camera": "follow", "subject": "required", "motion": "high",
+      "on_section": "any",
+      "shoot": "Closer than feels necessary. The masking that puts words behind the subject needs them to occupy at least 3% of frame, and further away than this it silently stops working." },
+
+    { "id": "stab_a", "role": "build", "weight": 0.28,
+      "what": "A fast detail — hands, gear, spray, a foot leaving the ground",
+      "framing": "detail", "camera": "static", "subject": "optional", "motion": "high",
+      "on_section": "any",
+      "shoot": "One of three quick stabs cut back to back. Half a second each on screen, so shoot two seconds and let the edit choose." },
+
+    { "id": "stab_b", "role": "build", "weight": 0.28,
+      "what": "A second fast detail from a different angle",
+      "framing": "detail", "camera": "whip", "subject": "optional", "motion": "high",
+      "on_section": "any",
+      "shoot": "Different angle, same energy. Whip out of it if you can — the burst reads harder when the frames disagree." },
+
+    { "id": "stab_c", "role": "build", "weight": 0.28,
+      "what": "A third fast detail, wider than the other two",
+      "framing": "wide", "camera": "handheld", "subject": "optional", "motion": "high",
+      "on_section": "any",
+      "shoot": "Widen to release the burst. Three stabs then a hold is the pattern." },
+
+    { "id": "hero", "role": "build", "weight": 0.9,
+      "what": "The subject travelling across frame, close",
+      "framing": "close", "camera": "follow", "subject": "required", "motion": "high",
+      "on_section": "any",
+      "shoot": "The best masking shot of the set: large subject, clean separation from the background, moving across the words." },
+
+    { "id": "payoff", "role": "payoff", "weight": 1.5, "must_have": true,
+      "what": "The biggest moment — the trick, the summit, the drop in",
+      "framing": "medium", "camera": "static", "subject": "required", "motion": "high",
+      "on_section": "drop",
+      "shoot": "4K60. The accent word lands on this one in red, so keep the centre of frame readable." },
+
+    { "id": "wide_release", "role": "build", "weight": 1.0,
+      "what": "A wide, calm frame after the payoff — the place without the action",
+      "framing": "wide", "camera": "static", "subject": "optional", "motion": "low",
+      "on_section": "sustain",
+      "shoot": "Let it breathe. After a burst, stillness is the effect." },
+
+    { "id": "close", "role": "cta", "weight": 0.9, "must_have": true,
+      "what": "Straight down the lens, or the last frame of the place",
+      "framing": "close", "camera": "static", "subject": "required", "motion": "low",
+      "on_section": "outro",
+      "shoot": "The final lyric word sits here. Hold four seconds, centre of frame uncluttered." }
+  ]
+}

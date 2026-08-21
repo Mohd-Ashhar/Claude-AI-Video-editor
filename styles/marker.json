@@ -1,0 +1,60 @@
+{
+  "id": "marker",
+  "title": "Marker",
+  "reference": "Gym-Inspiration/gym_3.MP4",
+  "note": "Brush handwriting in caps, fully opaque, over the hardest cutting of the four (shot lengths down to 0.07s). The red is the only fully saturated colour in this whole system -- measured #F12109 on an eroded glyph core, so that is the ink itself and not an anti-aliased edge.",
+  "faces": {
+    "display": [
+      "/System/Library/Fonts/MarkerFelt.ttc#1",
+      "/System/Library/Fonts/MarkerFelt.ttc#0",
+      "/System/Library/Fonts/Supplemental/Chalkduster.ttf"
+    ],
+    "accent": [
+      "/System/Library/Fonts/MarkerFelt.ttc#1",
+      "/System/Library/Fonts/Supplemental/Chalkduster.ttf"
+    ]
+  },
+  "case": "upper",
+  "tracking": 1.0,
+  "shadow": false,
+  "colours": {
+    "base": {
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "alpha": 1.0
+    },
+    "accent": {
+      "rgb": [
+        241,
+        33,
+        9
+      ],
+      "alpha": 1.0
+    }
+  },
+  "scale_ladder": [
+    0.11,
+    0.16,
+    0.24,
+    0.38
+  ],
+  "ladder_weights": [
+    0.24,
+    0.34,
+    0.28,
+    0.14
+  ],
+  "anchor_grid": {
+    "cols": 3,
+    "rows": 3,
+    "jitter": 0.05
+  },
+  "max_resident": 3,
+  "accent_every": 2,
+  "bleed_edges": false,
+  "backdrop_word": null,
+  "distress": null
+}

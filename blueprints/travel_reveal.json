@@ -1,0 +1,71 @@
+{
+  "id": "travel_reveal",
+  "pillar": "travel",
+  "title": "The reveal",
+  "premise": "You are walking somewhere and the viewer cannot see where. The location arrives on the drop. The strongest open loop there is.",
+  "target_seconds": 22,
+  "chronological": true,
+  "loop": false,
+  "song": {
+    "tempo": [90, 150],
+    "aggression": [0.2, 0.75],
+    "vocal_density": [0.2, 1.0],
+    "energy_variance": [0.3, 1.0],
+    "needs_drop": true,
+    "payoff_at": 0.53
+  },
+  "copy": {
+    "hook": "Nobody told me this place existed",
+    "labels": ["two hours in", "still climbing", "almost"],
+    "cta": "Save this for your trip"
+  },
+  "shots": [
+    { "id": "hook", "role": "hook", "weight": 0.55, "max_seconds": 2.0, "must_have": true,
+      "what": "Feet on a path, a hand on a door, a bus window — anywhere but the destination",
+      "framing": "detail", "camera": "follow", "subject": "optional", "motion": "medium",
+      "on_section": "any", "text": { "kind": "hook_title", "max_words": 7 },
+      "shoot": "Camera low, pointed down at your feet, walking. The rule for this whole first half: the viewer must not be able to guess where you are." },
+
+    { "id": "promise", "role": "promise", "weight": 0.6, "must_have": true,
+      "what": "A closed frame that hides the view — trees, a wall, a corridor, fog",
+      "framing": "medium", "camera": "push_in", "subject": "optional", "motion": "low",
+      "on_section": "any", "text": { "kind": "label", "max_words": 4, "index": 0 },
+      "shoot": "Find something that physically blocks the horizon and shoot into it. You are buying the payoff here." },
+
+    { "id": "approach_a", "role": "build", "weight": 0.8,
+      "what": "Moving toward it — walking, climbing, a road ahead",
+      "framing": "wide", "camera": "follow", "subject": "required", "motion": "medium",
+      "on_section": "build",
+      "shoot": "Walk away from the camera into the frame. Keep the horizon out of shot or high in it." },
+
+    { "id": "approach_b", "role": "build", "weight": 0.6,
+      "what": "A detail of the place that gives nothing away — a sign, water, a texture",
+      "framing": "detail", "camera": "pan", "subject": "none", "motion": "medium",
+      "on_section": "build", "text": { "kind": "label", "max_words": 4, "index": 1 },
+      "shoot": "A slow deliberate pan across it. Pans give the editor a direction to whip out of; a static detail gives nothing." },
+
+    { "id": "approach_c", "role": "build", "weight": 0.5,
+      "what": "You, from behind, about to arrive",
+      "framing": "medium", "camera": "follow", "subject": "required", "motion": "medium",
+      "on_section": "build", "text": { "kind": "label", "max_words": 4, "index": 2 },
+      "shoot": "Frame so your body blocks most of what is beyond you. This is the last shot before the reveal." },
+
+    { "id": "payoff", "role": "payoff", "weight": 1.9, "must_have": true,
+      "what": "The reveal. The widest, most complete view of the place.",
+      "framing": "wide", "camera": "tilt_reveal", "subject": "optional", "motion": "medium",
+      "on_section": "drop",
+      "shoot": "Start pointed at the ground or behind an obstruction and tilt or step out into the view. One continuous move, six seconds, no cuts. Shoot it four times — this single shot is most of the reel." },
+
+    { "id": "presence", "role": "build", "weight": 0.9,
+      "what": "You inside the view, small against it",
+      "framing": "wide", "camera": "static", "subject": "required", "motion": "low",
+      "on_section": "sustain",
+      "shoot": "Put yourself in the bottom third and let the place fill the rest. Scale is what makes a landscape read on a phone." },
+
+    { "id": "cta", "role": "cta", "weight": 0.9, "must_have": true,
+      "what": "A calm hold on the place, or you looking out at it",
+      "framing": "medium", "camera": "static", "subject": "optional", "motion": "low",
+      "on_section": "outro", "text": { "kind": "cta", "max_words": 6 },
+      "shoot": "Hold five seconds, camera still. Leave the centre of the frame clear for the text." }
+  ]
+}

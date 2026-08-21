@@ -1,0 +1,77 @@
+{
+  "id": "travel_day_in_place",
+  "pillar": "travel",
+  "title": "A day in one place",
+  "premise": "Sunrise to night in one location. Chronological, so it survives a flat track — the story carries it instead of the drop.",
+  "target_seconds": 26,
+  "chronological": true,
+  "loop": true,
+  "song": {
+    "tempo": [85, 130],
+    "aggression": [0.0, 0.5],
+    "vocal_density": [0.3, 1.0],
+    "energy_variance": [0.0, 0.6],
+    "needs_drop": false,
+    "payoff_at": 0.6
+  },
+  "copy": {
+    "hook": "24 hours in the same square mile",
+    "labels": ["05:40", "morning", "midday", "golden hour", "after dark"],
+    "cta": "Save this for your trip"
+  },
+  "shots": [
+    { "id": "hook", "role": "hook", "weight": 0.55, "max_seconds": 2.0, "must_have": true,
+      "what": "The most striking single frame of the whole day, out of order",
+      "framing": "wide", "camera": "static", "subject": "optional", "motion": "low",
+      "on_section": "any", "text": { "kind": "hook_title", "max_words": 8 },
+      "shoot": "Break chronology once, here only. Open with your best frame and then go back to the beginning — nobody watches a sunrise they were not promised something for." },
+
+    { "id": "dawn", "role": "promise", "weight": 0.9, "must_have": true,
+      "what": "First light. Empty streets, mist, the place before anyone is in it.",
+      "framing": "wide", "camera": "static", "subject": "none", "motion": "still",
+      "on_section": "any", "text": { "kind": "label", "max_words": 3, "index": 0 },
+      "shoot": "Tripod. Hold ten seconds so the editor can find a slow drift inside it. Shoot before you think you need to." },
+
+    { "id": "morning", "role": "build", "weight": 0.8,
+      "what": "The place waking up — shutters, coffee, first people",
+      "framing": "medium", "camera": "pan", "subject": "optional", "motion": "medium",
+      "on_section": "any", "text": { "kind": "label", "max_words": 3, "index": 1 },
+      "shoot": "One slow pan across the activity. Do not chase things; let them cross the frame." },
+
+    { "id": "detail_morning", "role": "build", "weight": 0.5,
+      "what": "One small thing — hands, steam, a stray animal",
+      "framing": "detail", "camera": "static", "subject": "none", "motion": "low",
+      "on_section": "any",
+      "shoot": "Details are what stop a travel reel reading as a postcard. Shoot twice as many as you think you need." },
+
+    { "id": "midday", "role": "build", "weight": 0.8,
+      "what": "Full daylight, the place at its busiest",
+      "framing": "wide", "camera": "handheld", "subject": "optional", "motion": "high",
+      "on_section": "any", "text": { "kind": "label", "max_words": 3, "index": 2 },
+      "shoot": "Walk through it with the camera at chest height. The one point in the day where movement and noise are the subject." },
+
+    { "id": "presence", "role": "build", "weight": 0.7,
+      "what": "You in it — walking, sitting, eating",
+      "framing": "medium", "camera": "static", "subject": "required", "motion": "low",
+      "on_section": "any",
+      "shoot": "Set the camera down and walk into frame. A day reel without a person in it is stock footage." },
+
+    { "id": "payoff", "role": "payoff", "weight": 1.7, "must_have": true,
+      "what": "Golden hour. The light doing the work.",
+      "framing": "wide", "camera": "push_in", "subject": "optional", "motion": "low",
+      "on_section": "drop", "text": { "kind": "label", "max_words": 3, "index": 3 },
+      "shoot": "Twenty minutes before sunset, not at it. Shoot into the light with something solid in the foreground. This is the frame the reel is remembered for." },
+
+    { "id": "night", "role": "build", "weight": 0.9,
+      "what": "After dark — lights, reflections, the place emptied again",
+      "framing": "medium", "camera": "static", "subject": "optional", "motion": "low",
+      "on_section": "sustain", "text": { "kind": "label", "max_words": 3, "index": 4 },
+      "shoot": "Find a light source in frame and expose for it. Handheld will be noisy — brace against something." },
+
+    { "id": "cta", "role": "cta", "weight": 0.9, "must_have": true,
+      "what": "Back to the opening frame, now at night — the loop",
+      "framing": "wide", "camera": "static", "subject": "optional", "motion": "still",
+      "on_section": "outro", "text": { "kind": "cta", "max_words": 6 },
+      "shoot": "Same position and framing as shot 1. Matching the first and last frame is what makes the loop invisible." }
+  ]
+}

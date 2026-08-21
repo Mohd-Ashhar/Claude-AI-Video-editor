@@ -1,0 +1,74 @@
+{
+  "id": "gym_pr_attempt",
+  "pillar": "fitness",
+  "title": "PR attempt",
+  "premise": "You are about to try a weight you have never lifted. The reel withholds whether you get it until the drop.",
+  "target_seconds": 22,
+  "chronological": true,
+  "loop": false,
+  "song": {
+    "tempo": [120, 180],
+    "aggression": [0.45, 1.0],
+    "energy_variance": [0.25, 1.0],
+    "needs_drop": true,
+    "payoff_at": 0.54
+  },
+  "copy": {
+    "hook": "I have never lifted this before",
+    "labels": ["last attempt: failed", "one shot at it", "no spotter"],
+    "cta": "Follow for the next one"
+  },
+  "shots": [
+    { "id": "hook", "role": "hook", "weight": 0.55, "max_seconds": 2.0, "must_have": true,
+      "what": "The loaded bar, tight, plates filling the frame. No face yet.",
+      "framing": "detail", "camera": "push_in", "subject": "none", "motion": "low",
+      "on_section": "any", "text": { "kind": "hook_title", "max_words": 8 },
+      "shoot": "Get the lens within a foot of the plate. Push in slowly on a gimbal — the number on the plate is the whole hook, so it must be readable in the first frame." },
+
+    { "id": "promise", "role": "promise", "weight": 0.6, "must_have": true,
+      "what": "You, standing over the bar, not moving. The stakes on your face.",
+      "framing": "medium", "camera": "static", "subject": "required", "motion": "still",
+      "on_section": "any", "text": { "kind": "label", "max_words": 4, "index": 0 },
+      "shoot": "Camera at chest height, three metres back. Hold completely still for four seconds so the editor can cut anywhere inside it." },
+
+    { "id": "chalk", "role": "build", "weight": 0.5,
+      "what": "Hands in chalk, clap, the dust hanging in the light",
+      "framing": "detail", "camera": "static", "subject": "optional", "motion": "medium",
+      "on_section": "build", "shoot": "Backlight the chalk if you can — dust against a dark background is the shot. One clap, two takes." },
+
+    { "id": "approach", "role": "build", "weight": 0.7,
+      "what": "You walking up to the bar, from behind or low",
+      "framing": "wide", "camera": "follow", "subject": "required", "motion": "medium",
+      "on_section": "build", "text": { "kind": "label", "max_words": 4, "index": 1 },
+      "shoot": "Low angle, camera below waist height looking up. Walk past the lens rather than towards it — movement across frame is what makes a whip transition possible." },
+
+    { "id": "grip", "role": "build", "weight": 0.5,
+      "what": "Hands closing on the bar, knuckles white",
+      "framing": "detail", "camera": "push_in", "subject": "optional", "motion": "low",
+      "on_section": "build", "shoot": "As tight as the lens focuses. This is the last quiet shot before the drop, so keep it still." },
+
+    { "id": "brace", "role": "build", "weight": 0.45,
+      "what": "The breath in. Chest expanding, eyes down.",
+      "framing": "close", "camera": "static", "subject": "required", "motion": "low",
+      "on_section": "build", "text": { "kind": "label", "max_words": 4, "index": 2 },
+      "shoot": "Side on, tight on the ribcage and jaw. Two seconds of stillness — this is the shot that makes the drop land." },
+
+    { "id": "payoff", "role": "payoff", "weight": 1.7, "must_have": true,
+      "what": "The lift. Bar leaving the floor, the bend in it, the lockout.",
+      "framing": "medium", "camera": "static", "subject": "required", "motion": "high",
+      "on_section": "drop",
+      "shoot": "4K60 — this is the one shot you will want to slow down, and there is no clean slow motion without it. Shoot the whole lift from a locked-off tripod at 45 degrees. Do not pan; let the movement cross the frame." },
+
+    { "id": "aftermath", "role": "build", "weight": 0.8,
+      "what": "The bar dropped, you walking out of frame, or hands on knees",
+      "framing": "wide", "camera": "handheld", "subject": "required", "motion": "medium",
+      "on_section": "sustain",
+      "shoot": "Keep rolling after the lift. The three seconds nobody films are the three seconds that read as real." },
+
+    { "id": "cta", "role": "cta", "weight": 0.9, "must_have": true,
+      "what": "You looking straight down the lens, or the empty bar still rolling",
+      "framing": "close", "camera": "static", "subject": "optional", "motion": "low",
+      "on_section": "outro", "text": { "kind": "cta", "max_words": 6 },
+      "shoot": "Hold four seconds. The text sits over this, so keep the middle of the frame uncluttered." }
+  ]
+}

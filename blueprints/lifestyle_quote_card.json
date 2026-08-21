@@ -1,0 +1,59 @@
+{
+  "id": "lifestyle_quote_card",
+  "pillar": "lifestyle",
+  "title": "Quote over footage",
+  "premise": "The words are the content and the footage is the backdrop. The one blueprint that works when the shots are ordinary but the light is good.",
+  "target_seconds": 20,
+  "chronological": false,
+  "loop": true,
+  "song": {
+    "tempo": [85, 120],
+    "aggression": [0.0, 0.4],
+    "vocal_density": [0.4, 1.0],
+    "energy_variance": [0.0, 0.5],
+    "needs_drop": false,
+    "payoff_at": 0.58
+  },
+  "copy": {
+    "hook": "Read this before you quit",
+    "labels": ["you are not behind", "it compounds quietly", "nobody is watching", "keep going anyway"],
+    "cta": "Send this to who needs it"
+  },
+  "shots": [
+    { "id": "hook", "role": "hook", "weight": 0.7, "max_seconds": 2.0, "must_have": true,
+      "what": "Your calmest, best-lit frame. Nothing happening in it.",
+      "framing": "wide", "camera": "push_in", "subject": "optional", "motion": "still",
+      "on_section": "any", "text": { "kind": "hook_title", "max_words": 7 },
+      "shoot": "Beautiful and empty. The text is the subject, so the shot must be quiet enough to read over — busy footage kills this format." },
+
+    { "id": "promise", "role": "promise", "weight": 1.0, "must_have": true,
+      "what": "A slow-moving frame — water, cloud, traffic, steam",
+      "framing": "medium", "camera": "static", "subject": "none", "motion": "low",
+      "on_section": "any", "text": { "kind": "label", "max_words": 5, "index": 0 },
+      "shoot": "Something that moves slightly but goes nowhere. Motion holds the eye; movement across frame competes with the words." },
+
+    { "id": "line_a", "role": "build", "weight": 1.0,
+      "what": "A human moment, small in the frame",
+      "framing": "wide", "camera": "static", "subject": "required", "motion": "low",
+      "on_section": "any", "text": { "kind": "label", "max_words": 5, "index": 1 },
+      "shoot": "Put yourself in a corner of the frame and leave the middle empty for the text." },
+
+    { "id": "line_b", "role": "build", "weight": 1.0,
+      "what": "A texture or detail with shallow depth",
+      "framing": "detail", "camera": "push_in", "subject": "none", "motion": "low",
+      "on_section": "any", "text": { "kind": "label", "max_words": 5, "index": 2 },
+      "shoot": "Blur the background hard. Out-of-focus backdrops are the easiest place to put white text." },
+
+    { "id": "payoff", "role": "payoff", "weight": 1.5, "must_have": true,
+      "what": "The best light you have — sun through something, golden hour, a window",
+      "framing": "medium", "camera": "push_in", "subject": "optional", "motion": "low",
+      "on_section": "drop", "text": { "kind": "label", "max_words": 5, "index": 3 },
+      "shoot": "The last line lands here, so the shot has to lift. Shoot toward the light with something solid in front of it." },
+
+    { "id": "cta", "role": "cta", "weight": 1.0, "must_have": true,
+      "what": "Back to the opening frame — the loop",
+      "framing": "wide", "camera": "static", "subject": "optional", "motion": "still",
+      "on_section": "outro", "text": { "kind": "cta", "max_words": 6 },
+      "shoot": "Match shot 1 exactly. On a quote reel the loop matters more than anywhere else — people re-read." }
+  ]
+}

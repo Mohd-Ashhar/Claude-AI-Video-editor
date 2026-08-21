@@ -1,0 +1,31 @@
+# Footage, renders and intermediates.
+#
+# None of this belongs in git: `out/` alone is 4.8 GB, and GitHub hard-rejects
+# any single file over 100 MB. Everything here is either the user's own
+# recordings, third-party reference reels, or regenerable output — the pipeline
+# rebuilds `work/` and `out/` from `inputs/` in one `pipeline.auto` run.
+
+# Renders and per-stage intermediates (regenerable)
+out/
+work/
+
+# Footage in and the reels it came from (private, and not ours to publish)
+inputs/
+Gym-Input/
+Gym-Inspiration/
+Project-1/
+
+# Songs, reference tracks and the u2netp model.
+# The model is a 4.6 MB download; pipeline/matte.py prints the curl command.
+assets/
+
+# uv-managed virtualenv
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# macOS
+.DS_Store

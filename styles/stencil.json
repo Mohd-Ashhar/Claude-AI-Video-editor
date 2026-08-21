@@ -1,0 +1,73 @@
+{
+  "id": "stencil",
+  "title": "Stencil",
+  "reference": "Gym-Inspiration/Gym_1.MP4",
+  "note": "Distressed slab in caps, stacked left-aligned two and three lines deep, with the last line of a stack in red -- and behind all of it one oversized word in dark red at roughly half the strip height. The reference's face is a distressed wood-type with no macOS equivalent; the roughness here is synthesised by eroding Rockwell's alpha with seeded noise, so it reads as rough slab rather than as that exact face.",
+  "faces": {
+    "display": [
+      "/System/Library/Fonts/Supplemental/Rockwell.ttc#2",
+      "/System/Library/Fonts/Supplemental/AmericanTypewriter.ttc#2",
+      "/System/Library/Fonts/Supplemental/Arial Black.ttf"
+    ],
+    "accent": [
+      "/System/Library/Fonts/Supplemental/Rockwell.ttc#2",
+      "/System/Library/Fonts/Supplemental/Arial Black.ttf"
+    ]
+  },
+  "case": "upper",
+  "tracking": 1.5,
+  "shadow": false,
+  "colours": {
+    "base": {
+      "rgb": [
+        243,
+        243,
+        245
+      ],
+      "alpha": 0.95
+    },
+    "accent": {
+      "rgb": [
+        163,
+        32,
+        26
+      ],
+      "alpha": 0.88
+    }
+  },
+  "scale_ladder": [
+    0.09,
+    0.12,
+    0.17,
+    0.26
+  ],
+  "ladder_weights": [
+    0.26,
+    0.34,
+    0.26,
+    0.14
+  ],
+  "anchor_grid": {
+    "cols": 2,
+    "rows": 4,
+    "jitter": 0.03
+  },
+  "max_resident": 3,
+  "accent_every": 3,
+  "bleed_edges": false,
+  "backdrop_word": {
+    "scale": 0.5,
+    "rgb": [
+      128,
+      20,
+      16
+    ],
+    "alpha": 0.26,
+    "every": 4
+  },
+  "distress": {
+    "erode": 0.38,
+    "speckle": 0.1,
+    "grain": 22
+  }
+}

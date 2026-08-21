@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "timeline",
+  "description": "The edit decision list. Segments render in order and concatenate; timecodes are source-relative seconds.",
+  "type": "object",
+  "required": ["segments"],
+  "properties": {
+    "version": { "type": "integer" },
+    "width": { "type": "integer" },
+    "height": { "type": "integer" },
+    "fps": { "type": "number" },
+    "audio": {
+      "type": "object",
+      "properties": {
+        "music": { "type": "string" },
+        "duck_nat_sound": { "type": "boolean" }
+      }
+    },
+    "sync": {
+      "type": "object",
+      "description": "Where this cut sits on the reference track, so the sound can be lined up again in the Instagram app.",
+      "properties": {
+        "track": { "type": "string" },
+        "tempo": { "type": "number" },
+        "best_start": { "type": "number" },
+        "bar_seconds": { "type": "number" }
+      }
+    },
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["kind"],
+        "oneOf": [
+          {
+            "properties": { "kind": { "const": "shot" } },
+            "required": ["kind", "source", "in", "out"],
+            "$ref": "#/$defs/clipFields"
+          },
+          {
+            "properties": {
+              "kind": { "const": "transition" },
+              "style": {
+                "description": "Named for what the picture does. Must stay in step with render.TRANSITIONS — the enum is what stops a typo becoming a silently wrong render.",
+                "enum": [
+                  "fade", "dissolve", "flash", "fade_black",
+                  "whip_left", "whip_right", "whip_up", "whip_down",
+                  "blur", "wipe_up", "zoom_in", "squeeze",
+                  "circle_open", "pixelize",
+                  "flash_cut", "glitch_cut", "zoom_punch", "impact_cut",
+                  "motion_match", "speed_ramp_cut", "light_leak_wipe"
+                ]
+              },
+              "duration": { "type": "number", "exclusiveMinimum": 0 },
+              "a": { "$ref": "#/$defs/clip" },
+              "b": { "$ref": "#/$defs/clip" }
+            },
+            "required": ["kind", "a", "b"]
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "clipFields": {
+      "properties": {
+        "source": { "type": "string" },
+        "in": { "type": "number", "minimum": 0 },
+        "out": { "type": "number", "exclusiveMinimum": 0 },
+        "speed": { "type": "number", "exclusiveMinimum": 0 },
+        "crop_x": { "type": ["number", "string"] },
+        "crop_y": { "type": ["number", "string"] },
+        "effects": { "$ref": "#/$defs/effects" }
+      }
+    },
+    "clip": {
+      "type": "object",
+      "required": ["source", "in", "out"],
+      "properties": {
+        "source": { "type": "string" },
+        "in": { "type": "number", "minimum": 0 },
+        "out": { "type": "number", "exclusiveMinimum": 0 },
+        "speed": { "type": "number", "exclusiveMinimum": 0 },
+        "crop_x": { "type": ["number", "string"] },
+        "crop_y": { "type": ["number", "string"] },
+        "exit_flow": { "type": "object" },
+        "effects": { "$ref": "#/$defs/effects" }
+      }
+    },
+    "effects": {
+      "type": "array",
+      "description": "Effect stack, compiled by pipeline/effects.py. Order within a stage is preserved; stages themselves always run geometry -> temporal -> look -> composite.",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": { "type": "string" },
+          "window": {
+            "type": "array",
+            "items": { "type": "number" },
+            "minItems": 2, "maxItems": 2,
+            "description": "[start, end] in the clip's own output seconds"
+          },
+          "at": { "type": "number", "minimum": 0 },
+          "duration": { "type": "number", "minimum": 0 }
+        }
+      }
+    }
+  }
+}

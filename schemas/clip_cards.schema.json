@@ -1,0 +1,291 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "clip_cards",
+  "description": "One card per shot: where it lives, how good it is, and what is in it. The contract between analysis and sequencing.",
+  "type": "object",
+  "required": [
+    "version",
+    "generated_at",
+    "weights",
+    "cards"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "weights": {
+      "type": "object",
+      "description": "Ranking weights. The orchestrator may vary these per project brief.",
+      "required": [
+        "technical",
+        "hook",
+        "motion"
+      ],
+      "additionalProperties": {
+        "type": "number"
+      },
+      "properties": {
+        "technical": {
+          "type": "number"
+        },
+        "hook": {
+          "type": "number"
+        },
+        "motion": {
+          "type": "number"
+        }
+      }
+    },
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "shot_id",
+          "source",
+          "proxy",
+          "start",
+          "end",
+          "duration",
+          "width",
+          "height",
+          "fps",
+          "max_crop_width",
+          "signals",
+          "rank_score"
+        ],
+        "properties": {
+          "shot_id": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "description": "Original file — rendered from"
+          },
+          "proxy": {
+            "type": "string",
+            "description": "480p file — analysed from"
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0
+          },
+          "end": {
+            "type": "number",
+            "minimum": 0
+          },
+          "duration": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "fps": {
+            "type": "number"
+          },
+          "max_crop_width": {
+            "type": "integer",
+            "description": "Widest 9:16 region available in source pixels"
+          },
+          "rank_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "take_id": {
+            "type": "string",
+            "description": "The shot this moment was carved out of"
+          },
+          "peak": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Strongest instant, in source seconds. Slots are trimmed around it."
+          },
+          "window_score": {
+            "type": "number"
+          },
+          "entry_flow": {
+            "$ref": "#/$defs/edgeMotion"
+          },
+          "exit_flow": {
+            "$ref": "#/$defs/edgeMotion"
+          },
+          "signals": {
+            "type": "object",
+            "required": [
+              "technical_score",
+              "sharpness_score",
+              "exposure_score",
+              "stability_score",
+              "motion_energy"
+            ],
+            "properties": {
+              "technical_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "sharpness_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "exposure_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "stability_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "motion_energy": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "motion_raw": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Median optical-flow magnitude in absolute units. Unlike motion_energy this is comparable across batches, which is what blueprint requirements are matched against."
+              },
+              "jitter": {
+                "type": "number"
+              },
+              "audio_rms": {
+                "type": "number"
+              },
+              "series": {
+                "type": "array",
+                "description": "Per-sample sharpness and motion, for sub-window selection",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "t": {
+                      "type": "number"
+                    },
+                    "sharpness": {
+                      "type": "number"
+                    },
+                    "motion": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Absent when no API key was set — every consumer must tolerate null",
+            "properties": {
+              "content_class": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "setting": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "hook_score": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10
+              },
+              "reel_role": {
+                "enum": [
+                  "opener",
+                  "build",
+                  "peak",
+                  "closer",
+                  "filler"
+                ]
+              },
+              "has_subject": {
+                "type": "boolean"
+              },
+              "keywords": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "grade": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Night-grade offsets solved for this clip by measurement. A fixed grade cannot serve a shoot whose clips span 45 points of luma.",
+            "properties": {
+              "brightness": {
+                "type": "number",
+                "minimum": -0.85,
+                "maximum": 0.6
+              },
+              "cool": {
+                "type": "number",
+                "minimum": -0.34,
+                "maximum": 0.34
+              },
+              "lift": {
+                "type": "number",
+                "minimum": 0.4,
+                "maximum": 0.86,
+                "description": "Mid control point of the tone curve. Raises the subject out of the shadows while the toe holds the background down."
+              },
+              "subject_seen": {
+                "type": "boolean",
+                "description": "Whether a subject mask was found. False means the grade had only the frame mean to work with, which is correct for a detail shot."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "edgeMotion": {
+      "type": "object",
+      "description": "Mean camera motion over the first or last 0.4s. The evidence sequence.py needs before it may fire a directional transition.",
+      "required": [
+        "dx",
+        "dy",
+        "magnitude",
+        "coherence"
+      ],
+      "properties": {
+        "dx": {
+          "type": "number",
+          "description": "Positive = content moves right"
+        },
+        "dy": {
+          "type": "number"
+        },
+        "magnitude": {
+          "type": "number",
+          "minimum": 0
+        },
+        "coherence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}

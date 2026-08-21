@@ -1,0 +1,71 @@
+{
+  "id": "lifestyle_routine",
+  "pillar": "lifestyle",
+  "title": "Process to result",
+  "premise": "Something made, start to finish — a meal, a setup, a repair. Chronological and endlessly repeatable. This is where cooking lives.",
+  "target_seconds": 24,
+  "chronological": true,
+  "loop": true,
+  "song": {
+    "tempo": [90, 140],
+    "aggression": [0.1, 0.6],
+    "vocal_density": [0.2, 1.0],
+    "energy_variance": [0.0, 0.55],
+    "needs_drop": false,
+    "payoff_at": 0.57
+  },
+  "copy": {
+    "hook": "40 grams of protein in four minutes",
+    "labels": ["three ingredients", "medium heat", "do not stir it", "ninety seconds"],
+    "cta": "Save this for tomorrow morning"
+  },
+  "shots": [
+    { "id": "hook", "role": "hook", "weight": 0.55, "max_seconds": 2.0, "must_have": true,
+      "what": "The finished result, shown first — the plate, the finished setup",
+      "framing": "close", "camera": "push_in", "subject": "none", "motion": "low",
+      "on_section": "any", "text": { "kind": "hook_title", "max_words": 8 },
+      "shoot": "Shoot the end first and open with it. Nobody watches a process for a result they have not been shown." },
+
+    { "id": "promise", "role": "promise", "weight": 0.7, "must_have": true,
+      "what": "Everything laid out before you start — ingredients, tools, parts",
+      "framing": "wide", "camera": "static", "subject": "none", "motion": "still",
+      "on_section": "any", "text": { "kind": "label", "max_words": 4, "index": 0 },
+      "shoot": "Straight down from above, everything in one frame, evenly lit. This is the shot that earns the save." },
+
+    { "id": "step_a", "role": "build", "weight": 0.8,
+      "what": "First action — the cut, the crack, the pour",
+      "framing": "detail", "camera": "static", "subject": "optional", "motion": "medium",
+      "on_section": "any", "text": { "kind": "label", "max_words": 4, "index": 1 },
+      "shoot": "Close, at counter height, hands entering from the side. Keep your body out of the light." },
+
+    { "id": "step_b", "role": "build", "weight": 0.8,
+      "what": "Second action — the one with heat, steam, or visible change",
+      "framing": "detail", "camera": "push_in", "subject": "optional", "motion": "medium",
+      "on_section": "any", "text": { "kind": "label", "max_words": 4, "index": 2 },
+      "shoot": "The shot with movement in it — bubbling, sizzling, steam. Backlight it if you can; steam is invisible front-lit." },
+
+    { "id": "step_c", "role": "build", "weight": 0.7,
+      "what": "Third action — the assembly, the fold, the fit",
+      "framing": "close", "camera": "static", "subject": "optional", "motion": "medium",
+      "on_section": "any", "text": { "kind": "label", "max_words": 4, "index": 3 },
+      "shoot": "Slow your hands down about a third. Real speed reads as fumbling on camera." },
+
+    { "id": "payoff", "role": "payoff", "weight": 1.7, "must_have": true,
+      "what": "The result completed — the cut into it, the first bite, the thing working",
+      "framing": "close", "camera": "push_in", "subject": "optional", "motion": "medium",
+      "on_section": "drop",
+      "shoot": "4K60 if anything moves — a yolk breaking, cheese pulling, sauce running. The one moment worth slowing down." },
+
+    { "id": "presence", "role": "build", "weight": 0.7,
+      "what": "You, in frame with it — eating, using it, done",
+      "framing": "medium", "camera": "static", "subject": "required", "motion": "low",
+      "on_section": "sustain",
+      "shoot": "Set the camera down and step in. A process reel with no person is a stock video." },
+
+    { "id": "cta", "role": "cta", "weight": 0.9, "must_have": true,
+      "what": "The finished result again, matching the opening frame",
+      "framing": "close", "camera": "static", "subject": "none", "motion": "still",
+      "on_section": "outro", "text": { "kind": "cta", "max_words": 6 },
+      "shoot": "Identical framing to shot 1 so the loop closes. Keep the middle clear for the text." }
+  ]
+}

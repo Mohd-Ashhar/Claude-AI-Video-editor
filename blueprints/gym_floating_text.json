@@ -1,0 +1,170 @@
+{
+  "id": "gym_floating_text",
+  "pillar": "fitness",
+  "title": "Floating text",
+  "premise": "One session, cut to the lyric, with the words scattered through the frame and the lifter passing in front of them. Nothing is explained; the type carries the whole message.",
+  "target_seconds": 22,
+  "chronological": false,
+  "loop": true,
+  "text_mode": "lyrics",
+  "letterbox": 1.7777777777777777,
+  "style": "chrome",
+  "song": {
+    "tempo": [
+      85,
+      110
+    ],
+    "aggression": [
+      0.3,
+      0.9
+    ],
+    "energy_variance": [
+      0.2,
+      1.0
+    ],
+    "needs_drop": true,
+    "payoff_at": 0.62
+  },
+  "copy": {
+    "hook": "",
+    "labels": [],
+    "cta": ""
+  },
+  "notes": [
+    "Measured off Gym-Inspiration/Gym_4.MP4: 21 cuts in 28.1s, a 16:9 strip, a six-cut burst at 9.7-11.3s, three decelerating ramps and no accelerating ones, and a frame graded to a mean luma of 38 out of 255.",
+    "The type is thin, near-white and carries no scrim. It is only legible because the ground is graded that far down, which is why night_grade is on every shot here and is not optional.",
+    "Words sit behind the subject wherever the matte allows it. That needs the subject to fill at least 2.5% of frame — measured 87-95% usable on real gym footage, and far lower on wides."
+  ],
+  "shots": [
+    {
+      "id": "hook",
+      "role": "hook",
+      "weight": 0.55,
+      "max_seconds": 2.0,
+      "must_have": true,
+      "what": "You walking into the empty gym, from behind, low angle, hard rim light down one side",
+      "framing": "wide",
+      "camera": "follow",
+      "subject": "required",
+      "motion": "medium",
+      "on_section": "any",
+      "shoot": "Low, below waist height, looking up. Backlight only — a rim on the shoulders is what survives the grade. Walk away from the lens, not towards it."
+    },
+    {
+      "id": "promise",
+      "role": "promise",
+      "weight": 0.6,
+      "must_have": true,
+      "what": "Mid-shot, you setting up, still. The frame is mostly dark and mostly empty.",
+      "framing": "medium",
+      "camera": "static",
+      "subject": "required",
+      "motion": "still",
+      "on_section": "any",
+      "shoot": "Hold four seconds without moving. Empty space on one side of frame is not wasted — it is where the words go."
+    },
+    {
+      "id": "detail_grip",
+      "role": "build",
+      "weight": 0.45,
+      "what": "Hands on the bar, chalk, the knurl",
+      "framing": "detail",
+      "camera": "push_in",
+      "subject": "optional",
+      "motion": "low",
+      "on_section": "build",
+      "shoot": "Close enough that the hand fills a third of frame. This is one of the shots that will carry a matte, so keep the background darker than the hand."
+    },
+    {
+      "id": "back_wide",
+      "role": "build",
+      "weight": 0.7,
+      "what": "You from directly behind, arms out, filling the centre of frame",
+      "framing": "medium",
+      "camera": "static",
+      "subject": "required",
+      "motion": "low",
+      "on_section": "build",
+      "shoot": "The single most useful shot in this blueprint. A large, clean, centred silhouette is what makes text-behind-subject read at all."
+    },
+    {
+      "id": "burst",
+      "role": "build",
+      "weight": 0.55,
+      "what": "The working set — any angle, as long as something moves in every frame",
+      "framing": "close",
+      "camera": "handheld",
+      "subject": "required",
+      "motion": "high",
+      "on_section": "build",
+      "burst": {
+        "cuts": 6
+      },
+      "shoot": "This slot is cut into six fragments of a fifth of a second each. Every one needs visible motion; a still frame inside a burst reads as a dropped frame. Shoot one long continuous take, not six.",
+      "max_seconds": 1.8
+    },
+    {
+      "id": "strain",
+      "role": "build",
+      "weight": 0.6,
+      "what": "The rep at its hardest — the face, the veins, the bar bending",
+      "framing": "close",
+      "camera": "static",
+      "subject": "required",
+      "motion": "high",
+      "on_section": "build",
+      "shoot": "Get in close and stay there. Two takes minimum."
+    },
+    {
+      "id": "feet",
+      "role": "build",
+      "weight": 0.4,
+      "what": "Low detail — shoes, the plate on the floor, dust",
+      "framing": "detail",
+      "camera": "static",
+      "subject": "optional",
+      "motion": "low",
+      "on_section": "build",
+      "shoot": "Camera on the floor. A pattern interrupt that costs nothing to shoot."
+    },
+    {
+      "id": "payoff",
+      "role": "payoff",
+      "weight": 0.85,
+      "must_have": true,
+      "what": "The finish — you standing up out of it, arms wide, everything released",
+      "framing": "medium",
+      "camera": "pull_out",
+      "subject": "required",
+      "motion": "high",
+      "on_section": "drop",
+      "shoot": "Shoot at 4K60 so this can be ramped down into a hold. The references decelerate into their payoff rather than speeding into it, and that is what makes it land."
+    },
+    {
+      "id": "hold",
+      "role": "payoff",
+      "weight": 0.65,
+      "what": "You holding still afterwards, breathing, half-lit",
+      "framing": "close",
+      "camera": "static",
+      "subject": "required",
+      "motion": "low",
+      "on_section": "sustain",
+      "shoot": "Let it run long. This is where the last words of the lyric sit."
+    },
+    {
+      "id": "close",
+      "role": "cta",
+      "weight": 0.5,
+      "what": "Back to the opening framing — you walking out, or the empty room",
+      "framing": "wide",
+      "camera": "static",
+      "subject": "optional",
+      "motion": "low",
+      "on_section": "outro",
+      "shoot": "Match the hook's framing so the loop closes invisibly. Same lens, same height, same wall."
+    }
+  ],
+  "grade": "night",
+  "subject_dodge": true
+}

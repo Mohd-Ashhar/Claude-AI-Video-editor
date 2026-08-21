@@ -1,0 +1,68 @@
+{
+  "id": "editorial",
+  "title": "Editorial",
+  "reference": "Gym-Inspiration/Gym_2.MP4",
+  "note": "Two voices, alternating. A high-contrast Didone carries the line in sentence case; every few words a bold grotesque in caps interrupts it. That contrast is the whole identity -- one face alone reads as either a perfume ad or a sports brand, and this is neither. Words here are allowed to run off the frame edge; the reference does it deliberately with a word set larger than the strip.",
+  "faces": {
+    "display": [
+      "/System/Library/Fonts/Supplemental/Didot.ttc#0",
+      "/System/Library/Fonts/Supplemental/Bodoni 72.ttc#0",
+      "/System/Library/Fonts/Supplemental/Baskerville.ttc"
+    ],
+    "accent": [
+      "/System/Library/Fonts/Supplemental/Didot.ttc#2",
+      "/System/Library/Fonts/Supplemental/Bodoni 72.ttc#2"
+    ],
+    "contrast": [
+      "/System/Library/Fonts/HelveticaNeue.ttc#1",
+      "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
+    ]
+  },
+  "case": "sentence",
+  "contrast_case": "upper",
+  "contrast_every": 5,
+  "tracking": 0.0,
+  "shadow": false,
+  "colours": {
+    "base": {
+      "rgb": [
+        246,
+        247,
+        250
+      ],
+      "alpha": 0.92
+    },
+    "accent": {
+      "rgb": [
+        150,
+        26,
+        22
+      ],
+      "alpha": 0.78
+    }
+  },
+  "scale_ladder": [
+    0.1,
+    0.15,
+    0.22,
+    0.34,
+    0.52
+  ],
+  "ladder_weights": [
+    0.2,
+    0.28,
+    0.26,
+    0.18,
+    0.08
+  ],
+  "anchor_grid": {
+    "cols": 3,
+    "rows": 4,
+    "jitter": 0.06
+  },
+  "max_resident": 3,
+  "accent_every": 4,
+  "bleed_edges": true,
+  "backdrop_word": null,
+  "distress": null
+}

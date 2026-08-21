@@ -1,0 +1,298 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "brief",
+  "description": "A blueprint laid over a real beat grid: every shot has a length in beats, a timecode, and the text that will sit over it. Produced before any footage exists; consumed by cast.py to match moments to slots and by sequence.py to build the timeline.",
+  "type": "object",
+  "required": [
+    "version",
+    "blueprint",
+    "music",
+    "shots",
+    "copy"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "blueprint": {
+      "type": "string"
+    },
+    "pillar": {
+      "enum": [
+        "fitness",
+        "travel",
+        "lifestyle"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "premise": {
+      "type": "string"
+    },
+    "concept": {
+      "type": "string",
+      "description": "What this particular reel is about, in the user's words."
+    },
+    "chronological": {
+      "type": "boolean"
+    },
+    "loop": {
+      "type": "boolean"
+    },
+    "target_seconds": {
+      "type": "number"
+    },
+    "total_seconds": {
+      "type": "number"
+    },
+    "music": {
+      "type": "object",
+      "required": [
+        "track",
+        "tempo",
+        "beat_period",
+        "best_start"
+      ],
+      "properties": {
+        "track": {
+          "type": "string"
+        },
+        "tempo": {
+          "type": "number"
+        },
+        "beat_period": {
+          "type": "number"
+        },
+        "bar_seconds": {
+          "type": "number"
+        },
+        "best_start": {
+          "type": "number",
+          "description": "Where in the track the reel begins — the timecode to dial into Instagram's audio trim."
+        },
+        "drop_at": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "payoff_at": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "copy": {
+      "type": "object",
+      "required": [
+        "hook",
+        "cta",
+        "source"
+      ],
+      "properties": {
+        "hook": {
+          "type": "string"
+        },
+        "cta": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "enum": [
+            "template",
+            "supplied",
+            "model"
+          ]
+        }
+      }
+    },
+    "shots": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "index",
+          "id",
+          "role",
+          "beats",
+          "duration",
+          "start",
+          "framing",
+          "camera",
+          "subject",
+          "motion"
+        ],
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "id": {
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "hook",
+              "promise",
+              "build",
+              "payoff",
+              "cta"
+            ]
+          },
+          "beats": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "duration": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Offset from the reel's first frame."
+          },
+          "track_time": {
+            "type": "number",
+            "description": "Absolute position in the reference track."
+          },
+          "section": {
+            "enum": [
+              "intro",
+              "build",
+              "drop",
+              "sustain",
+              "outro"
+            ]
+          },
+          "on_downbeat": {
+            "type": "boolean"
+          },
+          "must_have": {
+            "type": "boolean"
+          },
+          "what": {
+            "type": "string"
+          },
+          "shoot": {
+            "type": "string"
+          },
+          "framing": {
+            "enum": [
+              "detail",
+              "close",
+              "medium",
+              "wide",
+              "pov"
+            ]
+          },
+          "camera": {
+            "enum": [
+              "static",
+              "push_in",
+              "pull_out",
+              "pan",
+              "orbit",
+              "whip",
+              "follow",
+              "tilt_reveal",
+              "handheld"
+            ]
+          },
+          "subject": {
+            "enum": [
+              "required",
+              "optional",
+              "none"
+            ]
+          },
+          "motion": {
+            "enum": [
+              "still",
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "text": {
+            "type": "object",
+            "required": [
+              "kind",
+              "text",
+              "at",
+              "duration"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "hook_title",
+                  "label",
+                  "cta"
+                ]
+              },
+              "text": {
+                "type": "string"
+              },
+              "at": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Offset within this shot."
+              },
+              "duration": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "text_mode": {
+      "enum": [
+        "captions",
+        "lyrics"
+      ],
+      "description": "captions = one hook/label/CTA per shot. lyrics = a word-level track on the music's transients, which replaces them entirely; the two together fight for the same pixels."
+    },
+    "letterbox": {
+      "type": "number",
+      "minimum": 1.0,
+      "maximum": 3.0,
+      "description": "Bar the frame to this aspect (16/9 = 1.778), leaving a cinematic strip. Drawn rather than scaled, so the subject stays the size it was shot."
+    },
+    "style": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "Typographic identity for the floating-text treatment; the id of a file in styles/. Only meaningful with text_mode 'lyrics'."
+    },
+    "grade": {
+      "enum": [
+        "none",
+        "night"
+      ],
+      "description": "House colour grade applied to every shot. 'night' is the measured look of the Gym-Inspiration reels: mean luma near 38/255 with blue about 10 points above red. It is load-bearing for the floating-text packs, whose type carries no scrim and is only legible against a ground taken that far down."
+    },
+    "subject_dodge": {
+      "type": "boolean",
+      "description": "Lift the subject through its own matte so it reads against the room. The references carry the subject at 53 luma against a frame of 35; a clip whose subject starts darker than its background cannot be graded there globally at any setting. Requires an all-frames matte, which roughly doubles the segmentation pass."
+    }
+  }
+}

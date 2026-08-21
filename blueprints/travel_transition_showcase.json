@@ -1,0 +1,64 @@
+{
+  "id": "travel_transition_showcase",
+  "pillar": "travel",
+  "title": "Transition showcase",
+  "premise": "The same action carries you between locations. Every cut is a match on movement — the reel that is entirely about the edit.",
+  "target_seconds": 20,
+  "chronological": false,
+  "loop": true,
+  "song": {
+    "tempo": [125, 175],
+    "aggression": [0.4, 1.0],
+    "energy_variance": [0.15, 0.8],
+    "needs_drop": false,
+    "payoff_at": 0.64
+  },
+  "copy": {
+    "hook": "Six places, one step",
+    "labels": [],
+    "cta": "Save this before you book"
+  },
+  "shots": [
+    { "id": "hook", "role": "hook", "weight": 0.6, "max_seconds": 2.0, "must_have": true,
+      "what": "The first location, with the exit move already starting",
+      "framing": "medium", "camera": "whip", "subject": "required", "motion": "high",
+      "on_section": "any", "text": { "kind": "hook_title", "max_words": 6 },
+      "shoot": "Stand still for a second, then whip the camera hard left. The whip must be fast enough to blur — a slow one reads as a mistake." },
+
+    { "id": "promise", "role": "promise", "weight": 0.7, "must_have": true,
+      "what": "Second location, entering on a whip from the same direction",
+      "framing": "medium", "camera": "whip", "subject": "required", "motion": "high",
+      "on_section": "any",
+      "shoot": "Whip *into* the shot from the same side you whipped out of. Direction must match or the cut fights itself — this is the one rule the whole blueprint rests on." },
+
+    { "id": "match_a", "role": "build", "weight": 0.7,
+      "what": "Third location, same action — a step, a turn, a hand across the lens",
+      "framing": "medium", "camera": "whip", "subject": "required", "motion": "high",
+      "on_section": "any",
+      "shoot": "Pick one action and repeat it identically everywhere. Same speed, same direction, same distance from the lens." },
+
+    { "id": "match_b", "role": "build", "weight": 0.7,
+      "what": "Fourth location, same action",
+      "framing": "medium", "camera": "whip", "subject": "required", "motion": "high",
+      "on_section": "any",
+      "shoot": "Vary the place, never the move. The consistency is what sells it." },
+
+    { "id": "match_c", "role": "build", "weight": 0.7,
+      "what": "Fifth location, same action",
+      "framing": "wide", "camera": "whip", "subject": "required", "motion": "high",
+      "on_section": "build",
+      "shoot": "Widen here to give the sequence somewhere to go before the payoff." },
+
+    { "id": "payoff", "role": "payoff", "weight": 1.6, "must_have": true,
+      "what": "The best location of the set, arriving and then holding still",
+      "framing": "wide", "camera": "tilt_reveal", "subject": "required", "motion": "medium",
+      "on_section": "drop",
+      "shoot": "Whip in as before, then stop dead and hold four seconds. After five fast cuts, stillness is the payoff." },
+
+    { "id": "cta", "role": "cta", "weight": 0.8, "must_have": true,
+      "what": "Back to location one, matching the opening frame",
+      "framing": "medium", "camera": "static", "subject": "required", "motion": "low",
+      "on_section": "outro", "text": { "kind": "cta", "max_words": 6 },
+      "shoot": "Same framing as shot 1 so it loops. Hold four seconds for the text." }
+  ]
+}

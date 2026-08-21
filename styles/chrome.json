@@ -1,0 +1,62 @@
+{
+  "id": "chrome",
+  "title": "Chrome",
+  "reference": "Gym-Inspiration/Gym_4.MP4",
+  "note": "The purest floating text of the four. Light geometric sans in sentence case, near-opaque cool white, with a deep blood red that sits far darker than a normal accent -- measured #700D0D against a frame whose mean luma is 38/255. It reads as depth rather than emphasis.",
+  "faces": {
+    "display": [
+      "/System/Library/Fonts/HelveticaNeue.ttc#7",
+      "/System/Library/Fonts/HelveticaNeue.ttc#12",
+      "/System/Library/Fonts/SFNS.ttf"
+    ],
+    "accent": [
+      "/System/Library/Fonts/HelveticaNeue.ttc#7",
+      "/System/Library/Fonts/SFNS.ttf"
+    ]
+  },
+  "case": "sentence",
+  "tracking": 0.0,
+  "shadow": false,
+  "colours": {
+    "base": {
+      "rgb": [
+        219,
+        221,
+        234
+      ],
+      "alpha": 0.9
+    },
+    "accent": {
+      "rgb": [
+        112,
+        13,
+        13
+      ],
+      "alpha": 0.62
+    }
+  },
+  "scale_ladder": [
+    0.09,
+    0.13,
+    0.19,
+    0.3,
+    0.45
+  ],
+  "ladder_weights": [
+    0.2,
+    0.3,
+    0.26,
+    0.17,
+    0.07
+  ],
+  "anchor_grid": {
+    "cols": 3,
+    "rows": 4,
+    "jitter": 0.045
+  },
+  "max_resident": 4,
+  "accent_every": 4,
+  "bleed_edges": false,
+  "backdrop_word": null,
+  "distress": null
+}

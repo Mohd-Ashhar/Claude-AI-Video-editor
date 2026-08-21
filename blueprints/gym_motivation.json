@@ -1,0 +1,70 @@
+{
+  "id": "gym_motivation",
+  "pillar": "fitness",
+  "title": "Motivation montage",
+  "premise": "No narrative. Effort, text, and the drop. The one that works when the footage is good and the story is thin.",
+  "target_seconds": 20,
+  "chronological": false,
+  "loop": false,
+  "song": {
+    "tempo": [130, 185],
+    "aggression": [0.55, 1.0],
+    "energy_variance": [0.3, 1.0],
+    "needs_drop": true,
+    "payoff_at": 0.5
+  },
+  "copy": {
+    "hook": "Nobody is coming to save you",
+    "labels": ["5am", "again", "no one watching", "every single day"],
+    "cta": "Send this to someone who needs it"
+  },
+  "shots": [
+    { "id": "hook", "role": "hook", "weight": 0.5, "max_seconds": 2.0, "must_have": true,
+      "what": "The single hardest-looking frame you own — strain, sweat, or the walk in",
+      "framing": "close", "camera": "handheld", "subject": "required", "motion": "high",
+      "on_section": "any", "text": { "kind": "hook_title", "max_words": 7 },
+      "shoot": "Tight and slightly unstable. This is the only shot where handheld shake helps — it reads as urgency rather than sloppiness." },
+
+    { "id": "promise", "role": "promise", "weight": 0.5, "must_have": true,
+      "what": "Empty gym, or you alone in it",
+      "framing": "wide", "camera": "static", "subject": "optional", "motion": "still",
+      "on_section": "any", "text": { "kind": "label", "max_words": 3, "index": 0 },
+      "shoot": "Wide and still, deliberately quiet after the hook. The contrast is the point." },
+
+    { "id": "effort_a", "role": "build", "weight": 0.45,
+      "what": "Effort, close — a face mid-set, veins, a grimace",
+      "framing": "close", "camera": "handheld", "subject": "required", "motion": "high",
+      "on_section": "build", "text": { "kind": "label", "max_words": 3, "index": 1 },
+      "shoot": "Get uncomfortably close. Wide shots of effort do not read; faces do." },
+
+    { "id": "effort_b", "role": "build", "weight": 0.45,
+      "what": "Effort, detail — chalk, a shaking bar, a hand on a knee",
+      "framing": "detail", "camera": "static", "subject": "optional", "motion": "high",
+      "on_section": "build",
+      "shoot": "Shoot three of these. They are the cheapest shots to get and the ones a montage runs out of first." },
+
+    { "id": "effort_c", "role": "build", "weight": 0.45,
+      "what": "Effort, wide — the whole body working, room visible",
+      "framing": "wide", "camera": "orbit", "subject": "required", "motion": "high",
+      "on_section": "build", "text": { "kind": "label", "max_words": 3, "index": 2 },
+      "shoot": "Walk an arc around the movement. An orbit gives the editor motion to match-cut on, which a locked-off wide never does." },
+
+    { "id": "payoff", "role": "payoff", "weight": 1.5, "must_have": true,
+      "what": "The heaviest, fastest, most violent thing in the session",
+      "framing": "medium", "camera": "static", "subject": "required", "motion": "high",
+      "on_section": "drop",
+      "shoot": "4K60. Locked off, 45 degrees, whole body in frame. Everything before this exists to make this land." },
+
+    { "id": "release", "role": "build", "weight": 0.6,
+      "what": "The moment after — the drop of the weight, the exhale, walking out",
+      "framing": "medium", "camera": "handheld", "subject": "required", "motion": "medium",
+      "on_section": "sustain", "text": { "kind": "label", "max_words": 4, "index": 3 },
+      "shoot": "Keep rolling. The release is what makes the effort mean anything." },
+
+    { "id": "cta", "role": "cta", "weight": 0.8, "must_have": true,
+      "what": "Something still — the empty rack, the door, you walking away",
+      "framing": "wide", "camera": "static", "subject": "optional", "motion": "low",
+      "on_section": "outro", "text": { "kind": "cta", "max_words": 7 },
+      "shoot": "Uncluttered middle of frame, the text lives there. Hold five seconds." }
+  ]
+}

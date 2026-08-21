@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "blueprint",
+  "description": "A story template. Describes what to shoot and in what order, not which clips to use — a blueprint exists before any footage does. brief.py lays one over a real beat grid to produce a shot list; cast.py matches shot moments back onto its slots.",
+  "type": "object",
+  "required": [
+    "id",
+    "pillar",
+    "title",
+    "premise",
+    "song",
+    "copy",
+    "shots"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "pillar": {
+      "enum": [
+        "fitness",
+        "travel",
+        "lifestyle"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "premise": {
+      "type": "string",
+      "description": "One line: the story this tells. Shown when choosing a blueprint."
+    },
+    "target_seconds": {
+      "type": "number",
+      "minimum": 8,
+      "maximum": 60
+    },
+    "chronological": {
+      "type": "boolean",
+      "description": "Whether shot order carries narrative time. Process content (a recipe, a day) breaks if reordered; a montage does not."
+    },
+    "loop": {
+      "type": "boolean",
+      "description": "The closer should match shot 1's framing so the reel loops invisibly, which buys a free re-watch."
+    },
+    "song": {
+      "type": "object",
+      "description": "What this story needs from the track. brief.py scores every blueprint against the measured profile and recommends the best fits.",
+      "required": [
+        "payoff_at"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "tempo": {
+          "$ref": "#/$defs/range"
+        },
+        "aggression": {
+          "$ref": "#/$defs/range"
+        },
+        "vocal_density": {
+          "$ref": "#/$defs/range"
+        },
+        "energy_variance": {
+          "$ref": "#/$defs/range"
+        },
+        "needs_drop": {
+          "type": "boolean",
+          "description": "A peak-driven story is unbuildable on a flat groove. Scored as a hard penalty, not a filter, so the choice stays yours."
+        },
+        "payoff_at": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Where through the reel the drop should land. Drives music.pick_start()."
+        }
+      }
+    },
+    "copy": {
+      "type": "object",
+      "description": "Template lines, used verbatim when no tailored copy is supplied.",
+      "required": [
+        "hook",
+        "cta"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "hook": {
+          "type": "string"
+        },
+        "cta": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "shots": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "$ref": "#/$defs/shot"
+      }
+    },
+    "text_mode": {
+      "enum": [
+        "captions",
+        "lyrics"
+      ],
+      "description": "captions = one hook/label/CTA per shot. lyrics = a word-level track on the music's transients, which replaces them entirely; the two together fight for the same pixels."
+    },
+    "letterbox": {
+      "type": "number",
+      "minimum": 1.0,
+      "maximum": 3.0,
+      "description": "Bar the frame to this aspect (16/9 = 1.778), leaving a cinematic strip. Drawn rather than scaled, so the subject stays the size it was shot."
+    },
+    "style": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "Typographic identity for the floating-text treatment; the id of a file in styles/. Only meaningful with text_mode 'lyrics'."
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Where this blueprint's numbers came from. Provenance, so a future disagreement is a measurement to re-run rather than an argument."
+    },
+    "grade": {
+      "enum": [
+        "none",
+        "night"
+      ],
+      "description": "House colour grade applied to every shot. 'night' is the measured look of the Gym-Inspiration reels: mean luma near 38/255 with blue about 10 points above red. It is load-bearing for the floating-text packs, whose type carries no scrim and is only legible against a ground taken that far down."
+    },
+    "subject_dodge": {
+      "type": "boolean",
+      "description": "Lift the subject through its own matte so it reads against the room. The references carry the subject at 53 luma against a frame of 35; a clip whose subject starts darker than its background cannot be graded there globally at any setting. Requires an all-frames matte, which roughly doubles the segmentation pass."
+    }
+  },
+  "$defs": {
+    "range": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "[low, high] band this blueprint prefers. Outside it scores down, never out."
+    },
+    "shot": {
+      "type": "object",
+      "required": [
+        "id",
+        "role",
+        "weight",
+        "what",
+        "framing",
+        "camera",
+        "subject",
+        "motion"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "hook",
+            "promise",
+            "build",
+            "payoff",
+            "cta"
+          ],
+          "description": "Position in the five-part spine. sequence.py picks the effect stack from this."
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Relative length. Quantised onto whole beats by sequence.quantise(), so the reel still ends on a downbeat at any tempo."
+        },
+        "max_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "must_have": {
+          "type": "boolean",
+          "description": "cast.py fails the build rather than filling this slot with the least-bad candidate."
+        },
+        "what": {
+          "type": "string",
+          "description": "What to point the camera at."
+        },
+        "framing": {
+          "enum": [
+            "detail",
+            "close",
+            "medium",
+            "wide",
+            "pov"
+          ]
+        },
+        "camera": {
+          "enum": [
+            "static",
+            "push_in",
+            "pull_out",
+            "pan",
+            "orbit",
+            "whip",
+            "follow",
+            "tilt_reveal",
+            "handheld"
+          ]
+        },
+        "subject": {
+          "enum": [
+            "required",
+            "optional",
+            "none"
+          ]
+        },
+        "motion": {
+          "enum": [
+            "still",
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "on_section": {
+          "enum": [
+            "any",
+            "intro",
+            "build",
+            "drop",
+            "sustain",
+            "outro"
+          ],
+          "description": "Which part of the track this shot should land on."
+        },
+        "text": {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "hook_title",
+                "label",
+                "cta"
+              ]
+            },
+            "max_words": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            },
+            "index": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Which entry of copy.labels this shot carries."
+            }
+          }
+        },
+        "shoot": {
+          "type": "string",
+          "description": "Instruction for the shot list, in the second person."
+        },
+        "burst": {
+          "type": "object",
+          "required": [
+            "cuts"
+          ],
+          "additionalProperties": false,
+          "description": "Cut this slot into a rapid run instead of holding it. Measured in the references at 4-7 cuts of 0.07-0.23s. The count is advisory: sequence.py clamps it to what the slot can carry at 2-7 frames apiece, because the slot's total length is frame-exact and may not bend. A slot longer than 1.87s is left whole.",
+          "properties": {
+            "cuts": {
+              "type": "integer",
+              "minimum": 3,
+              "maximum": 8
+            },
+            "negate": {
+              "type": "boolean",
+              "description": "Invert one fragment in the middle of the run. gym_3 does this once, for 0.07s."
+            }
+          }
+        }
+      }
+    }
+  }
+}

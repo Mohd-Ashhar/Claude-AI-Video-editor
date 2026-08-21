@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "moments",
+  "description": "Candidate reel shots found inside continuous takes. Deliberately the same shape as shots.json, so signals, vlm_tag, merge and the render spine operate on moments without structural change.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "shot_id", "take_id", "source", "proxy", "name",
+      "start", "end", "duration", "peak", "window_score",
+      "entry_flow", "exit_flow", "fps", "width", "height", "max_crop_width"
+    ],
+    "properties": {
+      "shot_id": { "type": "string" },
+      "take_id": {
+        "type": "string",
+        "description": "The scenes.py shot this window was carved out of"
+      },
+      "source": { "type": "string", "description": "Original file — rendered from" },
+      "proxy": { "type": "string", "description": "480p file — analysed from" },
+      "name": { "type": "string" },
+      "start": { "type": "number", "minimum": 0 },
+      "end": { "type": "number", "exclusiveMinimum": 0 },
+      "duration": { "type": "number", "minimum": 2, "maximum": 8 },
+      "peak": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Argmax of the per-frame score inside the window, in source seconds"
+      },
+      "window_score": { "type": "number" },
+      "entry_flow": { "$ref": "#/$defs/edgeMotion" },
+      "exit_flow": { "$ref": "#/$defs/edgeMotion" },
+      "fps": { "type": "number" },
+      "width": { "type": "integer" },
+      "height": { "type": "integer" },
+      "max_crop_width": { "type": "integer" }
+    }
+  },
+  "$defs": {
+    "edgeMotion": {
+      "type": "object",
+      "required": ["dx", "dy", "magnitude", "coherence"],
+      "properties": {
+        "dx": { "type": "number", "description": "Positive = content moves right" },
+        "dy": { "type": "number" },
+        "magnitude": { "type": "number", "minimum": 0 },
+        "coherence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "id": "lifestyle_pov_day",
+  "pillar": "lifestyle",
+  "title": "POV day",
+  "premise": "First person, one continuous thread through a day. The camera is your eyes and never cuts away to look at you.",
+  "target_seconds": 24,
+  "chronological": true,
+  "loop": false,
+  "song": {
+    "tempo": [88, 135],
+    "aggression": [0.0, 0.5],
+    "vocal_density": [0.45, 1.0],
+    "energy_variance": [0.1, 0.7],
+    "needs_drop": false,
+    "payoff_at": 0.56
+  },
+  "copy": {
+    "hook": "POV: the day nobody posts about",
+    "labels": ["still dark", "hour three", "worth it"],
+    "cta": "Follow if this is your year too"
+  },
+  "shots": [
+    { "id": "hook", "role": "hook", "weight": 0.55, "max_seconds": 2.0, "must_have": true,
+      "what": "Eyes-open moment — a ceiling, an alarm, a door from the inside",
+      "framing": "pov", "camera": "handheld", "subject": "none", "motion": "low",
+      "on_section": "any", "text": { "kind": "hook_title", "max_words": 8 },
+      "shoot": "Hold the camera where your head would be, at your eye height, and keep it there for the entire reel. The moment it drops to chest height the illusion goes." },
+
+    { "id": "promise", "role": "promise", "weight": 0.7, "must_have": true,
+      "what": "Your hands doing the first thing of the day",
+      "framing": "pov", "camera": "handheld", "subject": "optional", "motion": "medium",
+      "on_section": "any", "text": { "kind": "label", "max_words": 3, "index": 0 },
+      "shoot": "Hands entering from the bottom of the frame, not the sides. That is what separates POV from a close-up." },
+
+    { "id": "leaving", "role": "build", "weight": 0.8,
+      "what": "Going out — a door, stairs, a street from walking height",
+      "framing": "pov", "camera": "follow", "subject": "none", "motion": "medium",
+      "on_section": "any",
+      "shoot": "Walk smoothly, roll your feet. Gimbal if you have it; without one, keep your elbows locked to your ribs." },
+
+    { "id": "work_a", "role": "build", "weight": 0.8,
+      "what": "The main thing the day is about, from inside it",
+      "framing": "pov", "camera": "handheld", "subject": "optional", "motion": "medium",
+      "on_section": "any", "text": { "kind": "label", "max_words": 3, "index": 1 },
+      "shoot": "Look at what you are doing, not at the camera. Whatever your hands are on should be the centre of the frame." },
+
+    { "id": "work_b", "role": "build", "weight": 0.6,
+      "what": "A detail from the same viewpoint — a screen, a tool, food",
+      "framing": "detail", "camera": "static", "subject": "none", "motion": "low",
+      "on_section": "any",
+      "shoot": "The one place you may break eye height, briefly, to look down at something." },
+
+    { "id": "payoff", "role": "payoff", "weight": 1.6, "must_have": true,
+      "what": "What the day was for — the view, the finish, the sit-down",
+      "framing": "pov", "camera": "tilt_reveal", "subject": "none", "motion": "low",
+      "on_section": "drop", "text": { "kind": "label", "max_words": 3, "index": 2 },
+      "shoot": "Lift your eyeline into it rather than cutting to it — a POV reel pays off by looking up." },
+
+    { "id": "settle", "role": "build", "weight": 0.8,
+      "what": "Stillness. Hands at rest, a drink, the light going.",
+      "framing": "pov", "camera": "static", "subject": "optional", "motion": "still",
+      "on_section": "sustain",
+      "shoot": "Brace the camera and do not move for eight seconds. The whole reel has been moving; this is where it stops." },
+
+    { "id": "cta", "role": "cta", "weight": 0.9, "must_have": true,
+      "what": "The last thing you look at before it ends",
+      "framing": "pov", "camera": "static", "subject": "none", "motion": "still",
+      "on_section": "outro", "text": { "kind": "cta", "max_words": 7 },
+      "shoot": "Still, simple, uncluttered centre. Hold five seconds." }
+  ]
+}

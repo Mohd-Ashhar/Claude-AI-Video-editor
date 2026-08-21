@@ -1,0 +1,65 @@
+{
+  "id": "gym_form_breakdown",
+  "pillar": "fitness",
+  "title": "Form breakdown",
+  "premise": "One movement, done wrong then done right, from three angles. The save-driven reel — people keep it to use later.",
+  "target_seconds": 24,
+  "chronological": false,
+  "loop": true,
+  "song": {
+    "tempo": [95, 140],
+    "aggression": [0.2, 0.6],
+    "vocal_density": [0.0, 0.5],
+    "energy_variance": [0.0, 0.5],
+    "needs_drop": false,
+    "payoff_at": 0.62
+  },
+  "copy": {
+    "hook": "You are doing this one wrong",
+    "labels": ["the mistake", "watch the knee", "from the front", "now the fix"],
+    "cta": "Save this before leg day"
+  },
+  "shots": [
+    { "id": "hook", "role": "hook", "weight": 0.55, "max_seconds": 2.0, "must_have": true,
+      "what": "The mistake, in one unmistakable frame — the rounded back, the caving knee",
+      "framing": "medium", "camera": "static", "subject": "required", "motion": "medium",
+      "on_section": "any", "text": { "kind": "hook_title", "max_words": 7 },
+      "shoot": "Exaggerate the error slightly so it reads at phone size in half a second. Side on, locked off, subject filling two thirds of the height." },
+
+    { "id": "promise", "role": "promise", "weight": 0.6, "must_have": true,
+      "what": "Same movement, same angle, the error held at its worst point",
+      "framing": "close", "camera": "push_in", "subject": "required", "motion": "low",
+      "on_section": "any", "text": { "kind": "label", "max_words": 4, "index": 0 },
+      "shoot": "Tight on the joint that is going wrong. Hold the bottom position for three seconds — this is a still frame with a slow push, not a rep." },
+
+    { "id": "angle_side", "role": "build", "weight": 1.0,
+      "what": "Full rep, side on, the reference angle",
+      "framing": "wide", "camera": "static", "subject": "required", "motion": "medium",
+      "on_section": "any", "text": { "kind": "label", "max_words": 4, "index": 1 },
+      "shoot": "Tripod, phone height, perfectly perpendicular. Three clean reps so the editor can pick the best one." },
+
+    { "id": "angle_front", "role": "build", "weight": 1.0,
+      "what": "Same rep, straight on from the front",
+      "framing": "medium", "camera": "static", "subject": "required", "motion": "medium",
+      "on_section": "any", "text": { "kind": "label", "max_words": 4, "index": 2 },
+      "shoot": "Move the tripod, do not zoom. Same distance, same height — matching the two angles is what makes the cut between them read as deliberate." },
+
+    { "id": "angle_detail", "role": "build", "weight": 0.7,
+      "what": "The detail that decides it — foot position, grip width, bar path",
+      "framing": "detail", "camera": "static", "subject": "optional", "motion": "low",
+      "on_section": "any",
+      "shoot": "Floor level if it is the feet. This is the shot that earns the save, so make it unambiguous." },
+
+    { "id": "payoff", "role": "payoff", "weight": 1.6, "must_have": true,
+      "what": "The corrected rep, full speed, from the hook's angle",
+      "framing": "medium", "camera": "static", "subject": "required", "motion": "high",
+      "on_section": "drop", "text": { "kind": "label", "max_words": 4, "index": 3 },
+      "shoot": "Exactly the framing of shot 1. The reel is an argument and this is its conclusion — if the framing matches, the difference is all the viewer sees." },
+
+    { "id": "cta", "role": "cta", "weight": 0.9, "must_have": true,
+      "what": "Back to the opening framing, corrected — the loop point",
+      "framing": "medium", "camera": "static", "subject": "required", "motion": "low",
+      "on_section": "outro", "text": { "kind": "cta", "max_words": 6 },
+      "shoot": "Match shot 1 so the reel loops without a seam. A loop that lands is a second view you did not have to earn." }
+  ]
+}

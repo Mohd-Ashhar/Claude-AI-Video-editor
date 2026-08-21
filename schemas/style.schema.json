@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "style",
+  "description": "A typographic identity for the floating-text treatment: which faces, which case, which colours, how big words are allowed to get and where they may sit. Measured off a reference reel rather than invented. compose.py consumes one of these per reel; the caption treatments in overlay.TREATMENTS are a separate, unrelated table.",
+  "type": "object",
+  "required": ["id", "faces", "case", "colours", "scale_ladder", "anchor_grid", "max_resident"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "title": { "type": "string" },
+    "reference": { "type": "string", "description": "The reel this was measured from." },
+    "note": { "type": "string" },
+
+    "faces": {
+      "type": "object",
+      "required": ["display"],
+      "description": "Font paths in preference order. A '#N' suffix selects a face inside a .ttc collection -- HelveticaNeue.ttc#7 is Light, #12 is Thin.",
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "type": "string" }
+      },
+      "properties": {
+        "display": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "accent": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "contrast": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      }
+    },
+
+    "case": { "enum": ["sentence", "upper", "lower", "as_written"] },
+    "contrast_case": { "enum": ["sentence", "upper", "lower", "as_written"] },
+    "contrast_every": {
+      "type": "integer", "minimum": 2,
+      "description": "Every Nth word switches to the `contrast` face. Absent means never."
+    },
+    "tracking": { "type": "number" },
+    "shadow": { "type": "boolean" },
+
+    "colours": {
+      "type": "object",
+      "required": ["base", "accent"],
+      "additionalProperties": false,
+      "properties": {
+        "base": { "$ref": "#/$defs/ink" },
+        "accent": { "$ref": "#/$defs/ink" }
+      }
+    },
+
+    "scale_ladder": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "type": "number", "exclusiveMinimum": 0, "maximum": 1.0 },
+      "description": "Cap heights as a fraction of the picture strip, ascending. The references carry a 6-8x spread inside one reel; a ladder with three rungs or fewer cannot reproduce that."
+    },
+    "ladder_weights": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "type": "number", "minimum": 0 }
+    },
+
+    "anchor_grid": {
+      "type": "object",
+      "required": ["cols", "rows"],
+      "additionalProperties": false,
+      "properties": {
+        "cols": { "type": "integer", "minimum": 2, "maximum": 6 },
+        "rows": { "type": "integer", "minimum": 2, "maximum": 6 },
+        "jitter": { "type": "number", "minimum": 0, "maximum": 0.2 }
+      }
+    },
+
+    "max_resident": {
+      "type": "integer", "minimum": 1, "maximum": 8,
+      "description": "How many words may be on screen at once before the phrase closes. Measured 2-5 across the four references."
+    },
+    "accent_every": { "type": "integer", "minimum": 1 },
+    "bleed_edges": {
+      "type": "boolean",
+      "description": "Allow a word to run past the safe box horizontally. Gym_2 does this deliberately with a word wider than the frame."
+    },
+
+    "backdrop_word": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["scale", "rgb", "alpha"],
+      "description": "An oversized, low-alpha word drawn behind the rest of the phrase. Gym_1 only.",
+      "properties": {
+        "scale": { "type": "number", "exclusiveMinimum": 0, "maximum": 1.0 },
+        "rgb": { "$ref": "#/$defs/rgb" },
+        "alpha": { "type": "number", "minimum": 0, "maximum": 1 },
+        "every": { "type": "integer", "minimum": 1 }
+      }
+    },
+
+    "distress": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "description": "Synthesised roughness applied to the glyph alpha. Deterministic for a given seed.",
+      "properties": {
+        "erode": { "type": "number", "minimum": 0, "maximum": 1 },
+        "speckle": { "type": "number", "minimum": 0, "maximum": 1 },
+        "grain": { "type": "number", "minimum": 0, "maximum": 128 }
+      }
+    }
+  },
+
+  "$defs": {
+    "rgb": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": { "type": "integer", "minimum": 0, "maximum": 255 }
+    },
+    "ink": {
+      "type": "object",
+      "required": ["rgb", "alpha"],
+      "additionalProperties": false,
+      "properties": {
+        "rgb": { "$ref": "#/$defs/rgb" },
+        "alpha": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}
